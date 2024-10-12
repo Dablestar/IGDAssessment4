@@ -1,0 +1,82 @@
+1) Must use original sprite
+2) Royalty-Free Audio
+3) by your own code
+4) No Rigidbody gravity physics
+5) Git Repository - 4 Branches(Master / Development / Feature - Visual / Feature - LevelGenerator
+
+
+Title : Police-Pacman
+
+Visual Sources : 
+Pacman => Player(Cop)
+Ghost => Enemy(Criminal)
+Ghost-scared => Get Naked
+Ghost-Dead => Smoke effect
+Normal Pallet => Coin
+Power Pallet => Handcuff
+Bonus Score => Gold Ingot
+Life => Donut
+
+
+Empty area => Grass
+border => wooden fence, each shape(L shape corner, T shape, straight wall)
+
+
+Audio Sources:
+GetNormalPallet => Twinkling sound
+GetPowerPallet => sword pickup sound
+GetBonusScore => internet enterence sound(frutiger aero style)
+OnPowerPalletEnd => breaking sound
+OnHit => punching sound
+OnMonsterHit => Cuffing Sound
+Background Music => Ambient, Loop
+
+
+Villager Animation => Moving, OnHit(turns red and becomes smoke)
+Zombie Animation => Moving, OnHit(turns red and becomes smoke)
+
+
+
+
+Raycast to the front
+if(wall detected){ rotate }
+
+TODO
+1) Automatic Level Generation
+2) Add audio - Ghost Normal Background after Game Intro Background
+3) Remove WaitForSeconds() on Player Cornering
+
+
+
+
+xStart = 90deg or 0deg (xStart yStart / xStart !yStart)
+xEnds = 180deg or 270deg
+
+
+
+xStart yStart = 90 deg
+xEnd yStart = 180deg
+xEnd yEnd = 270deg
+xStart yEnd = 0deg
+
+
+initial xStarted = 0, yStarted = 0
+
+came here again, x is bigger than xStarted => xEnd
+came here again, y is bigger than yStarted => yEnd
+
+
+Corner Condition
+
+1) nothing below
+2) nothing above
+
+
+[y - 1][x] && [y][x + 1] => 0  ㄴ
+[y - 1][x] && [y][x - 1] => 90 Reverse ㄴ
+[y + 1][x] && [y][x+1] => 180 Reverse ㄱ
+[y + 1][x] && [y][x-1] => ㄱ
+
+
+0, 2, 3, 5, 6
+
