@@ -29,7 +29,7 @@ public class BorderColorChanger : MonoBehaviour
 
         private void Update()
         {
-            throw new NotImplementedException();
+            BorderColorChange();
         }
         
         void BorderColorChange()

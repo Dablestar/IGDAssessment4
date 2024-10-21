@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,12 +11,19 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     private int score;
-    private Time time;
+    private float time;
+    private Button button;
     
     // Start is called before the first frame update
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
+
     void Start()
     {
-        time = new Time();
+        time = 0f;
     }
 
     // Update is called once per frame
@@ -27,19 +35,23 @@ public class UIManager : MonoBehaviour
     public void MoveToMainScene()
     {
         Debug.Log("clicked");
-        DontDestroyOnLoad(this);
+        Time.timeScale = 1;
         SceneManager.LoadScene("MainScene");
     }
 
     public void MoveToDesignIteration()
     {
-        DontDestroyOnLoad(this);
         Debug.Log("Not Implemented");
     }
 
     public void MoveToStartScene()
     {
+        score = 0;
+        Time.timeScale = 0;
+        time = 0f;
         
+        DontDestroyOnLoad(this);
+        SceneManager.LoadScene("StartScene");
     }
 
     
