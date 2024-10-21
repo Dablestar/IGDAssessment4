@@ -36,6 +36,5 @@ public class Tweener : MonoBehaviour
             activeTween.Target.position = activeTween.EndPos;
             activeTween = null;
         }
-        
     }
 }
