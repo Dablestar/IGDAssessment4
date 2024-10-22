@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -19,13 +20,12 @@ public class LevelGenerator : MonoBehaviour
     {
         mapInfo = new List<string[]>();
         GetMapInfoFromFile();
-        parent = GameObject.Find("Grid");
-        wallParent = Instantiate(new GameObject("Walls"), parent.transform).AddComponent<Tilemap>();
-        palletParent = Instantiate(new GameObject("Pallets"), parent.transform).AddComponent<Tilemap>();
-
-        wallParent.transform.position = new Vector3(40f, 0f, 0f);
-        palletParent.transform.position = new Vector3(40f, 0f, -0.1f);
+        parent = GameObject.Find("Map");
+        wallParent = Instantiate(new GameObject("Walls"), transform).AddComponent<Tilemap>();
+        palletParent = Instantiate(new GameObject("Pallets"), transform).AddComponent<Tilemap>();
         CreateMap();
+        
+        Camera.main.orthographicSize = Screen.height / (tilePalette[1].transform.localScale.x * 30);
     }
 
     public void GetMapInfoFromFile()
@@ -56,6 +56,26 @@ public class LevelGenerator : MonoBehaviour
                 string leftNeighbor = x > 0 ? mapInfo[y][x - 1] : "0";
                 string rightNeighbor = x < mapInfo[y].Length - 1 ? mapInfo[y][x + 1] : "0";
 
+                bool upIsWall = !(upNeighbor.Equals("0") || upNeighbor.Equals("5") || upNeighbor.Equals("6"));
+                bool downIsWall = !(downNeighbor.Equals("0") || downNeighbor.Equals("5") || downNeighbor.Equals("6"));
+                bool rightIsWall = !(rightNeighbor.Equals("0") || rightNeighbor.Equals("5") || rightNeighbor.Equals("6"));
+                bool leftIsWall = !(leftNeighbor.Equals("0") || leftNeighbor.Equals("5") || leftNeighbor.Equals("6"));
+                
+                //diagonal neighbor indexing
+                string upLeftNeighbor =  y > 0 && x > 0 ? mapInfo[y - 1][x - 1] : "0";
+                string upRightNeighbor =  y > 0 && x < mapInfo[y].Length - 1 ? mapInfo[y - 1][x + 1] : "0";
+                string downLeftNeighbor = y < mapInfo.Count - 1 && x  > 0? mapInfo[y + 1][x - 1] : "0";
+                string downRightNeighbor = y < mapInfo.Count - 1 && x  < mapInfo[y].Length - 1? mapInfo[y + 1][x + 1] : "0";
+                
+                bool upleftIsWall = !(upLeftNeighbor.Equals("0") || upLeftNeighbor.Equals("5") || upLeftNeighbor.Equals("6"));
+                bool downleftIsWall = !(downLeftNeighbor.Equals("0") || downLeftNeighbor.Equals("5") || downLeftNeighbor.Equals("6"));
+                bool uprightIsWall = !(upRightNeighbor.Equals("0") || upRightNeighbor.Equals("5") || upRightNeighbor.Equals("6"));
+                bool downrightIsWall = !(downRightNeighbor.Equals("0") || downRightNeighbor.Equals("5") || downRightNeighbor.Equals("6"));
+
+                bool specialCase1 = (!upIsWall && !downIsWall && rightIsWall && !leftIsWall);
+                bool specialCase2 = (!upIsWall && !downIsWall && !rightIsWall && leftIsWall);
+
+
                 Quaternion rotation = Quaternion.identity;
                 switch (mapInfo[y][x])
                 {
@@ -66,88 +86,57 @@ public class LevelGenerator : MonoBehaviour
 
                     case "2":
                     case "4":
-                        Debug.Log($"x : {x}, y: {y}");
                         //Base case : border
                         
                         //I tried my best, but there was still some errors on rotation.
                         //So, this code works with basic logic(check empty place around neighbor) + case by case solution. Please release solution later. I want to know better way to do this.
-                        if ((y == 0 || y == mapInfo.Count))
+                        if (leftIsWall && rightIsWall)
                         {
-                            rotation *= Quaternion.Euler(0, 0, 90f);
+                            rotation = Quaternion.Euler(0, 0, 90f);
+                        }
+                        else if (upIsWall && downIsWall)
+                        {
+                            rotation = Quaternion.identity;
                         }
                         else
                         {
-                            if (!(leftNeighbor.Equals("0") || leftNeighbor.Equals("5") ||
-                                  leftNeighbor.Equals("6")) &&
-                                !(rightNeighbor.Equals("0") || rightNeighbor.Equals("5") ||
-                                  rightNeighbor.Equals("6")))
-                            {
-                                if ( (upNeighbor.Equals("3") || upNeighbor.Equals("4")) && (downNeighbor.Equals("3") || downNeighbor.Equals("4")))
-                                {
-                                    rotation = Quaternion.identity;
-                                }
-                                else
-                                {
-                                    rotation *= Quaternion.Euler(0, 0, 90f);    
-                                }
-                                
-                            }
-                            else if ((leftNeighbor.Equals("0") || leftNeighbor.Equals("5") ||
-                                       leftNeighbor.Equals("6")) &&
-                                     !(rightNeighbor.Equals("0") || rightNeighbor.Equals("5") ||
-                                       rightNeighbor.Equals("6")))
-                            {
-                                if ( (upNeighbor.Equals("3") || upNeighbor.Equals("4")) && (downNeighbor.Equals("3") || downNeighbor.Equals("4")))
-                                {
-                                    rotation = Quaternion.identity;
-                                }
-                                else
-                                {
-                                    rotation *= Quaternion.Euler(0, 0, 90f);    
-                                }
-                            }
-                            else if (!(leftNeighbor.Equals("0") || leftNeighbor.Equals("5") ||
-                                      leftNeighbor.Equals("6")) &&
-                                     (rightNeighbor.Equals("0") || rightNeighbor.Equals("5") ||
-                                       rightNeighbor.Equals("6")))
-                            {
-                                if ( (upNeighbor.Equals("3") || upNeighbor.Equals("4")) && (downNeighbor.Equals("3") || downNeighbor.Equals("4")))
-                                {
-                                    rotation = Quaternion.identity;
-                                }
-                                else
-                                {
-                                    rotation *= Quaternion.Euler(0, 0, 90f);    
-                                }
-                            }
-                            else
-                            {
-                                rotation = Quaternion.identity;
-                            }
+                            rotation = Quaternion.Euler(0, 0, 90f);
                         }
 
                         Instantiate(tilePalette[2], position, rotation, wallParent.transform);
                         break;
                     case "1":
                     case "3":
-                        if (!(rightNeighbor.Equals("0") || rightNeighbor.Equals("5") || rightNeighbor.Equals("6")))
+                        if (!leftIsWall && rightIsWall)
                         {
-                            if (!(downNeighbor.Equals("0") || downNeighbor.Equals("5") || downNeighbor.Equals("6")))
+                            if (downIsWall)
                                 rotation *= Quaternion.Euler(0, 0, 270);
-                            else if (!(upNeighbor.Equals("0") || upNeighbor.Equals("5") || upNeighbor.Equals("6")))
+                            else if (upIsWall)
                                 rotation *= Quaternion.Euler(0, 0, 0);
                         }
-                        else if (!(leftNeighbor.Equals("0") || leftNeighbor.Equals("5") | leftNeighbor.Equals("6")))
+                        else if (leftIsWall && !rightIsWall)
                         {
-                            if (!(downNeighbor.Equals("0") || downNeighbor.Equals("5") || downNeighbor.Equals("6")))
+                            if (downIsWall)
                                 rotation *= Quaternion.Euler(0, 0, 180);
-                            else if (!(upNeighbor.Equals("0") || upNeighbor.Equals("5") || upNeighbor.Equals("6")))
+                            else if (upIsWall)
                                 rotation *= Quaternion.Euler(0, 0, 90);
                         }
-
-                        if (upNeighbor.Equals("4") && downNeighbor.Equals("3") && rightNeighbor.Equals("4"))
+                        else if(leftIsWall && rightIsWall)
                         {
-                            rotation = Quaternion.identity;
+                            if (!upleftIsWall)
+                            {
+                                rotation *= Quaternion.Euler(0, 0, 90);
+                            }else if (!downleftIsWall)
+                            {
+                                rotation *= Quaternion.Euler(0, 0, 180);
+                            }else if (!uprightIsWall)
+                            {
+                                rotation *= Quaternion.identity;
+                            }
+                            else if(!downrightIsWall)
+                            {
+                                rotation *= Quaternion.Euler(0, 0, 270);
+                            }
                         }
 
                         Instantiate(tilePalette[1], position, rotation, wallParent.transform);
@@ -166,12 +155,13 @@ public class LevelGenerator : MonoBehaviour
                         break;
                     case "7":
                         Debug.Log($"x : {x}, y: {y}");
-                        if ((y == 0 || y == mapInfo.Count))
+                        if (y == mapInfo.Count - 1)
                         {
-                            rotation *= Quaternion.Euler(0, 0, -90f);
+                            rotation *= Quaternion.Euler(0, 0, 90f);
                         }
                         else
                         {
+                            
                             if (x != 0 && x != mapInfo[y].Length - 1)
                             {
                                 if ((downNeighbor.Equals("0") || rightNeighbor.Equals("2")) ||

@@ -31,12 +31,12 @@ public class ObjectSpawner : MonoBehaviour
             GameObject.Find("EnemySpawnPoint").transform.GetChild(2).position,
             GameObject.Find("EnemySpawnPoint").transform.GetChild(3).position,
         };
-        Instantiate(player, playerSpawnPoint, Quaternion.identity, GameObject.Find("Grid").transform);
+        Instantiate(player, playerSpawnPoint, Quaternion.identity, GameObject.Find("Map").transform);
         
-        enemyList.Add(Instantiate(enemy, enemySpawnPointList[0], Quaternion.identity, GameObject.Find("Grid").transform));
-        enemyList.Add(Instantiate(enemy, enemySpawnPointList[1], Quaternion.identity, GameObject.Find("Grid").transform));
-        enemyList.Add(Instantiate(enemy, enemySpawnPointList[2], Quaternion.identity, GameObject.Find("Grid").transform));
-        enemyList.Add(Instantiate(enemy, enemySpawnPointList[3], Quaternion.identity, GameObject.Find("Grid").transform));
+        enemyList.Add(Instantiate(enemy, enemySpawnPointList[0], Quaternion.identity, GameObject.Find("Map").transform));
+        enemyList.Add(Instantiate(enemy, enemySpawnPointList[1], Quaternion.identity, GameObject.Find("Map").transform));
+        enemyList.Add(Instantiate(enemy, enemySpawnPointList[2], Quaternion.identity, GameObject.Find("Map").transform));
+        enemyList.Add(Instantiate(enemy, enemySpawnPointList[3], Quaternion.identity, GameObject.Find("Map").transform));
     }
 
     // Update is called once per frame
