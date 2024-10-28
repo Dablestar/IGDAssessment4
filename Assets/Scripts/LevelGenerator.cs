@@ -16,13 +16,15 @@ public class LevelGenerator : MonoBehaviour
     private Tilemap palletParent;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         mapInfo = new List<string[]>();
         GetMapInfoFromFile();
         parent = GameObject.Find("Map");
         wallParent = Instantiate(new GameObject("Walls"), transform).AddComponent<Tilemap>();
         palletParent = Instantiate(new GameObject("Pallets"), transform).AddComponent<Tilemap>();
+        wallParent.transform.position = new Vector3(0, 0, -1);
+        palletParent.transform.position = new Vector3(0, 0, -1);
         CreateMap();
         
         Camera.main.orthographicSize = Screen.height / (tilePalette[1].transform.localScale.x * 30);
@@ -103,7 +105,7 @@ public class LevelGenerator : MonoBehaviour
                             rotation = Quaternion.Euler(0, 0, 90f);
                         }
 
-                        Instantiate(tilePalette[2], position, rotation, wallParent.transform);
+                        Instantiate(tilePalette[2], position + new Vector3Int(0, 0, -1), rotation, wallParent.transform);
                         break;
                     case "1":
                     case "3":
@@ -139,7 +141,7 @@ public class LevelGenerator : MonoBehaviour
                             }
                         }
 
-                        Instantiate(tilePalette[1], position, rotation, wallParent.transform);
+                        Instantiate(tilePalette[1], position + new Vector3Int(0, 0, 1), rotation, wallParent.transform);
                         break;
                     case "5":
                         Debug.Log($"x : {x}, y: {y}");

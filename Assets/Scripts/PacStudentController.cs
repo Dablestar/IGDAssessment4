@@ -21,7 +21,6 @@ public class PacStudentController : MonoBehaviour
 
     private Tweener tweener;
 
-    private Vector2[] pointList;
 
     // Start is called before the first frame update
     void Awake()
@@ -30,27 +29,29 @@ public class PacStudentController : MonoBehaviour
         score = 0;
         studentSound = gameObject.GetComponent<AudioSource>();
         tweener = gameObject.GetComponent<Tweener>();
-        pointList = new Vector2[]
-        {
-            new Vector2(-5.5f, 4f),
-            new Vector2(-5.5f, 0.5f),
-            new Vector2(-10.5f, 0.5f),
-            new Vector2(-10.5f, 4f)
-        };
         StartCoroutine(PlayFootworkAudio());
-        StartCoroutine(MovePlayer());
+        isWalking = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         studentAnim.SetFloat("moveSpeed", moveSpeed);
-
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.W))
         {
-            StartCoroutine(PlayFootworkAudio());
-            StartCoroutine(MovePlayer());
+            
+        }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            
+        }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            
+        }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            
         }
     }
 
@@ -125,24 +126,6 @@ public class PacStudentController : MonoBehaviour
         isWalking = true;
     }
 
-    private IEnumerator MovePlayer()
-    {
-        for (int i = 0; i < pointList.Length; i++)
-        {
-            Move();
-            studentAnim.SetInteger("movingDirection", (4 - i));
-            if (!tweener.isTweenOnGoing())
-            {
-                tweener.AddTween(gameObject.transform, gameObject.transform.position, pointList[i], moveSpeed);
-            }
-
-            yield return new WaitUntil(() => !tweener.isTweenOnGoing());
-            Stop();
-            if (i >= 3) i = -1;
-            yield return new WaitForSeconds(0.01f);
-        }
-    }
-
     private IEnumerator KillPlayer()
     {
         Stop();
@@ -187,6 +170,7 @@ public class PacStudentController : MonoBehaviour
         {
             transform.Rotate(90f, 0f, 0f);
             studentSound.clip = onWallHitSound;
+            Stop();
             studentSound.Play();
         }
     }

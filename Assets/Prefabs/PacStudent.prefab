@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5074942049453249513}
   - component: {fileID: -6828568806123406128}
   - component: {fileID: 3205364158948417380}
-  - component: {fileID: 15570217545550141}
+  - component: {fileID: 3287193559493110567}
   m_Layer: 0
   m_Name: PacStudent
   m_TagString: Player
@@ -242,22 +242,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   snapDistance: 0.1
---- !u!50 &15570217545550141
-Rigidbody2D:
-  serializedVersion: 4
+--- !u!65 &3287193559493110567
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8800493757511251132}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -265,7 +256,10 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.5230546, y: 0.9693939, z: 0.2}
+  m_Center: {x: 0.019128919, y: 0.0153030455, z: 0}
