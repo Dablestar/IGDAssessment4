@@ -33,11 +33,11 @@ public class ObjectSpawner : MonoBehaviour
             GameObject.Find("EnemySpawnPoint").transform.GetChild(2).position,
             GameObject.Find("EnemySpawnPoint").transform.GetChild(3).position,
         };
-        Instantiate(player, playerSpawnPoint, Quaternion.identity, GameObject.Find("Map").transform);
+        Instantiate(player, playerSpawnPoint, Quaternion.identity, GameObject.Find("LevelGenerator").transform);
 
         for (int i = 0; i < 4; i++)
         {
-            var temp = Instantiate(enemy, enemySpawnPointList[i], Quaternion.identity, GameObject.Find("Map").transform);
+            var temp = Instantiate(enemy, enemySpawnPointList[i], Quaternion.identity, GameObject.Find("LevelGenerator").transform);
             enemyList.Add(temp);
             var canvasTemp = Instantiate(new GameObject($"Ghost{i + 1}Canvas"), temp.transform).AddComponent<Canvas>();
             var textTemp = canvasTemp.AddComponent<TextMeshPro>();

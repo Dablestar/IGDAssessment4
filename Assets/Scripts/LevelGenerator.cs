@@ -8,12 +8,17 @@ public class LevelGenerator : MonoBehaviour
 {
     private const string path = "Assets/PacManLevelMap.csv";
     [SerializeField] private GameObject[] tilePalette;
-    private List<string[]> mapInfo;
+    private static List<string[]> mapInfo;
     private Vector3 generatorCoordinate;
 
     private GameObject parent;
     private Tilemap wallParent;
     private Tilemap palletParent;
+
+    public static List<string[]> MapInfo
+    {
+        get { return mapInfo; }
+    }
 
     // Start is called before the first frame update
     void Awake()
@@ -21,13 +26,11 @@ public class LevelGenerator : MonoBehaviour
         mapInfo = new List<string[]>();
         GetMapInfoFromFile();
         parent = GameObject.Find("Map");
-        wallParent = Instantiate(new GameObject("Walls"), transform).AddComponent<Tilemap>();
-        palletParent = Instantiate(new GameObject("Pallets"), transform).AddComponent<Tilemap>();
-        wallParent.transform.position = new Vector3(0, 0, -1);
-        palletParent.transform.position = new Vector3(0, 0, -1);
+        wallParent = Instantiate(new GameObject("Walls"), new Vector3(0, 0, 1), quaternion.identity, transform).AddComponent<Tilemap>();
+        palletParent = Instantiate(new GameObject("Pallets"), new Vector3(0, 0, 1), quaternion.identity, transform).AddComponent<Tilemap>();
+        wallParent.transform.localPosition = new Vector3(0, -0.5f, 0);
+        palletParent.transform.localPosition = new Vector3(0, -0.5f, 0);
         CreateMap();
-        
-        Camera.main.orthographicSize = Screen.height / (tilePalette[1].transform.localScale.x * 30);
     }
 
     public void GetMapInfoFromFile()
@@ -141,7 +144,7 @@ public class LevelGenerator : MonoBehaviour
                             }
                         }
 
-                        Instantiate(tilePalette[1], position + new Vector3Int(0, 0, 1), rotation, wallParent.transform);
+                        Instantiate(tilePalette[1], position + new Vector3Int(0, 0, -1), rotation, wallParent.transform);
                         break;
                     case "5":
                         Debug.Log($"x : {x}, y: {y}");

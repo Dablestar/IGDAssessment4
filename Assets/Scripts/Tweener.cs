@@ -1,40 +1,101 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using dir;
+using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class Tweener : MonoBehaviour
-{
-    private Tween activeTween;
-    [SerializeField][Range(0f, 1f)] private float snapDistance = 0.1f;
+public class Tweener : MonoBehaviour {
+    //private Tween activeTween;
+    private List<Tween> activeTweens;
+    private List<Vector2> movingArr;
+    private List<string[]> map;
 
-    public void AddTween(Transform targetObject, Vector2 startPos, Vector2 endPos, float duration)
-    {
-        activeTween ??= new Tween(targetObject, startPos, endPos, Time.time, duration);
+    void Start() {
+        activeTweens = new List<Tween>();
+        map = LevelGenerator.MapInfo;
     }
     
-    public bool isTweenOnGoing()
-    {
-        if (activeTween != null)
+    void Update() {
+        Tween activeTween;
+        for (int i = activeTweens.Count-1; i >=0; i--)
         {
+            activeTween = activeTweens[i];
+
+            if (Vector2.Distance(activeTween.Target.position, activeTween.EndPos) > 0.1f) {
+                float timeFraction = (Time.time - activeTween.StartTime) / activeTween.Duration;
+                activeTween.Target.position = Vector2.Lerp(activeTween.StartPos,
+                    activeTween.EndPos,
+                    timeFraction);                
+            } else {
+                activeTween.Target.position = activeTween.EndPos;
+                activeTweens.RemoveAt(i);
+            }
+        }
+    }
+
+    public bool AddTween(Transform targetObject, Vector2 startPos, Vector2 endPos, float duration)
+    {
+        if (!TweenExists(targetObject))
+        {
+            activeTweens.Add(new Tween(targetObject, startPos, endPos, Time.time, duration));
             return true;
         }
         return false;
     }
-
-    void Update()
+    public bool Move(Transform targetObject, Vector2 startPos, Direction direction, float moveSpeed, int x, int y)
     {
-        if (activeTween == null) return;
-        if (Vector2.Distance(activeTween.Target.position, activeTween.EndPos) > snapDistance)
+        movingArr = new List<Vector2>()
         {
-            float timeFraction = (Time.time - activeTween.StartTime) / activeTween.Duration;  //Linear
-            activeTween.Target.position = Vector2.Lerp(activeTween.StartPos, activeTween.EndPos, timeFraction); 
-        }else if (Vector2.Distance(activeTween.Target.position, activeTween.EndPos) <= snapDistance)
+            new(targetObject.transform.position.x, targetObject.transform.position.y+1),
+            new(targetObject.transform.position.x, targetObject.transform.position.y-1),
+            new(targetObject.transform.position.x-1, targetObject.transform.position.y),
+            new(targetObject.transform.position.x+1, targetObject.transform.position.y)
+        };
+        moveSpeed = 1.5f;
+        if (IsWalkable(direction, x, y) && !TweenExists(targetObject) && direction != Direction.None)
         {
-            //if close, snap to position, get rid of tween
-            activeTween.Target.position = activeTween.EndPos;
-            activeTween = null;
+            AddTween(targetObject, startPos, movingArr[(int)direction], moveSpeed);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool TweenExists(Transform target) {
+        foreach (Tween activeTween in activeTweens) {
+            if (activeTween.Target.transform == target)
+                return true;
+        }
+        return false;
+    }
+    private bool IsWalkable(Direction direction, int x, int y)
+    {
+        //neighbor indexing
+        string upNeighbor = y > 0 ? map[y - 1][x] : "0";
+        string downNeighbor = y < map.Count - 1 ? map[y + 1][x] : "0";
+        string leftNeighbor = x > 0 ? map[y][x - 1] : "0";
+        string rightNeighbor = x < map[y].Length - 1 ? map[y][x + 1] : "0";
+
+        bool isWall(string neighbor)
+        {
+            return !(neighbor.Equals("0") || neighbor.Equals("5") || neighbor.Equals("6"));
+        }
+        
+        switch (direction)
+        {
+            case Direction.Up:
+                return !isWall(upNeighbor);
+            case Direction.Down:
+                return !isWall(downNeighbor);
+            case Direction.Left:
+                return !isWall(leftNeighbor);
+            case Direction.Right:
+                return !isWall(rightNeighbor);
+            default:
+                return false;
         }
     }
 }

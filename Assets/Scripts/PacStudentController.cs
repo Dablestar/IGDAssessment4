@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using dir;
 using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -13,6 +14,8 @@ public class PacStudentController : MonoBehaviour
     [SerializeField] private AudioClip onWallHitSound;
     [SerializeField] private Animator studentAnim;
 
+    
+    [SerializeField]private int posX, posY;
     static int score { get; set; }
 
     private AudioSource studentSound;
@@ -21,6 +24,8 @@ public class PacStudentController : MonoBehaviour
 
     private Tweener tweener;
 
+    private Direction lastInput;
+    private Direction currentInput;
 
     // Start is called before the first frame update
     void Awake()
@@ -29,8 +34,15 @@ public class PacStudentController : MonoBehaviour
         score = 0;
         studentSound = gameObject.GetComponent<AudioSource>();
         tweener = gameObject.GetComponent<Tweener>();
+        lastInput = Direction.None;
         StartCoroutine(PlayFootworkAudio());
-        isWalking = false;
+    }
+
+    private void Start()
+    {
+        Stop();
+        posX = 1;
+        posY = 1;
     }
 
     // Update is called once per frame
@@ -39,20 +51,45 @@ public class PacStudentController : MonoBehaviour
         studentAnim.SetFloat("moveSpeed", moveSpeed);
         if (Input.GetKeyDown(KeyCode.W))
         {
-            
+            lastInput = Direction.Up;
+            moveSpeed = 1f;
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.A))
         {
-            
+            lastInput = Direction.Left;
+            moveSpeed = 1f;
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.S))
         {
-            
+            lastInput = Direction.Down;
+            moveSpeed = 1f;
         }
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.D))
         {
-            
+            lastInput = Direction.Right;
+            moveSpeed = 1f;
         }
+
+        if (tweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)
+        {
+            currentInput = lastInput;
+            switch (lastInput)
+            {
+                case Direction.Up:
+                    posY--;
+                    break;
+                case Direction.Down:
+                    posY++;
+                    break;
+                case Direction.Left:
+                    posX--;
+                    break;
+                case Direction.Right:
+                    posX++;
+                    break;
+            }
+        }
+        
     }
 
     public static void AddScore(int amount)
@@ -83,35 +120,7 @@ public class PacStudentController : MonoBehaviour
         }
     }
 
-    // private int SetAnimationDirection(Vector2 startPos, Vector2 endPos)
-    // {
-    //     // W, up
-    //     if (startPos.y < endPos.y)
-    //     {
-    //         return 1;
-    //     }
-    //
-    //     // A, left
-    //     if (startPos.x < endPos.x)
-    //     {
-    //         return 2;
-    //     }
-    //
-    //     // S, down
-    //     if (startPos.y > endPos.y)
-    //     {
-    //         return 3;
-    //     }
-    //
-    //     // D, right
-    //     if (startPos.y > endPos.y)
-    //     {
-    //         return 4;
-    //     }
-    //
-    //     //default, down
-    //     return 2;
-    // }
+    
 
     private void Stop()
     {
@@ -120,11 +129,7 @@ public class PacStudentController : MonoBehaviour
         isWalking = false;
     }
 
-    private void Move()
-    {
-        moveSpeed = 3f;
-        isWalking = true;
-    }
+    
 
     private IEnumerator KillPlayer()
     {
