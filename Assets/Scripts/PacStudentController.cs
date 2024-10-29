@@ -13,6 +13,8 @@ public class PacStudentController : MonoBehaviour
     [SerializeField] private AudioClip onPlayerHitSound;
     [SerializeField] private AudioClip onWallHitSound;
     [SerializeField] private Animator studentAnim;
+    [SerializeField] private ParticleSystem movementParticle;
+
 
     
     [SerializeField]private int posX, posY;
@@ -72,6 +74,7 @@ public class PacStudentController : MonoBehaviour
 
         if (tweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)
         {
+            movementParticle.Play();
             currentInput = lastInput;
             switch (lastInput)
             {
