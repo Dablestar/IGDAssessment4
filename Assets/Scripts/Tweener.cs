@@ -11,7 +11,7 @@ public class Tweener : MonoBehaviour {
     private List<Vector2> movingArr;
     private List<string[]> map;
 
-    void Start() {
+    void Awake() {
         activeTweens = new List<Tween>();
         map = LevelGenerator.MapInfo;
     }
@@ -21,7 +21,6 @@ public class Tweener : MonoBehaviour {
         for (int i = activeTweens.Count-1; i >=0; i--)
         {
             activeTween = activeTweens[i];
-
             if (Vector2.Distance(activeTween.Target.position, activeTween.EndPos) > 0.1f) {
                 float timeFraction = (Time.time - activeTween.StartTime) / activeTween.Duration;
                 activeTween.Target.position = Vector2.Lerp(activeTween.StartPos,
@@ -52,7 +51,6 @@ public class Tweener : MonoBehaviour {
             new(targetObject.transform.position.x-1, targetObject.transform.position.y),
             new(targetObject.transform.position.x+1, targetObject.transform.position.y)
         };
-        moveSpeed = 1.5f;
         if (IsWalkable(direction, x, y) && !TweenExists(targetObject) && direction != Direction.None)
         {
             AddTween(targetObject, startPos, movingArr[(int)direction], moveSpeed);

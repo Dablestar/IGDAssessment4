@@ -9914,6 +9914,7 @@ MonoBehaviour:
   onPlayerHitSound: {fileID: 8300000, guid: 43c6955197bac7d45b4ae3a7879c85c3, type: 3}
   onWallHitSound: {fileID: 8300000, guid: e7c91c5cd14b4bb40a349f5937648361, type: 3}
   studentAnim: {fileID: 5074942049453249513}
+  movementParticle: {fileID: 5528344105384637549}
   posX: 0
   posY: 0
 --- !u!114 &3205364158948417380

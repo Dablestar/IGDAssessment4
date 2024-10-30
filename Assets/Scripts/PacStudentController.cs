@@ -32,7 +32,7 @@ public class PacStudentController : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        moveSpeed = 1.5f;
+        moveSpeed = 0.5f;
         score = 0;
         studentSound = gameObject.GetComponent<AudioSource>();
         tweener = gameObject.GetComponent<Tweener>();
@@ -54,22 +54,22 @@ public class PacStudentController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             lastInput = Direction.Up;
-            moveSpeed = 1f;
+            moveSpeed = 0.5f;
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
             lastInput = Direction.Left;
-            moveSpeed = 1f;
+            moveSpeed = 0.5f;
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
             lastInput = Direction.Down;
-            moveSpeed = 1f;
+            moveSpeed = 0.5f;
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
             lastInput = Direction.Right;
-            moveSpeed = 1f;
+            moveSpeed = 0.5f;
         }
 
         if (tweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)

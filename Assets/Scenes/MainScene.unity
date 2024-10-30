@@ -1035,6 +1035,7 @@ GameObject:
   - component: {fileID: 889654870}
   - component: {fileID: 889654869}
   - component: {fileID: 889654871}
+  - component: {fileID: 889654872}
   m_Layer: 0
   m_Name: CharacterMovementHandler
   m_TagString: Untagged
@@ -1083,7 +1084,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd824804d4bc0e946bdce5e8b691bb4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snapDistance: 0.1
+--- !u!114 &889654872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889654868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e91871b6f80201347b8a317e521454bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bonusCherry: {fileID: 303191434837830544, guid: 6f50ab0f12a2b7648be07d817f2b3d2d, type: 3}
 --- !u!1 &1044736257
 GameObject:
   m_ObjectHideFlags: 0

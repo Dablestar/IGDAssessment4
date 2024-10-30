@@ -9,9 +9,12 @@ public class ObjectSpawner : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject enemy;
     private List<GameObject> enemyList;
+    
 
     private Vector3 playerSpawnPoint;
     private List<Vector3> enemySpawnPointList;
+
+    private Tweener objTweener;
 
     private static int playerLife = 3;
 
@@ -24,6 +27,7 @@ public class ObjectSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        objTweener = gameObject.GetComponent<Tweener>();
         enemyList = new List<GameObject>();
         playerSpawnPoint = GameObject.Find("PlayerSpawnPoint").transform.position;
         enemySpawnPointList = new List<Vector3>()
@@ -46,6 +50,7 @@ public class ObjectSpawner : MonoBehaviour
             textTemp.alignment = TextAlignmentOptions.Center;
             textTemp.rectTransform.anchoredPosition = new Vector2(0, 1);
         }
+        
     }
 
     // Update is called once per frame
@@ -62,4 +67,6 @@ public class ObjectSpawner : MonoBehaviour
         }
         return false;
     }
+
+    
 }
