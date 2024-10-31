@@ -71,6 +71,10 @@ public class Tweener : MonoBehaviour {
     }
     private bool IsWalkable(Direction direction, int x, int y)
     {
+        if (x < 0 || y < 0 || x >= map.Count - 1 || y >= map[x].Length - 1)
+        {
+            return true;
+        } 
         //neighbor indexing
         string upNeighbor = y > 0 ? map[y - 1][x] : "0";
         string downNeighbor = y < map.Count - 1 ? map[y + 1][x] : "0";

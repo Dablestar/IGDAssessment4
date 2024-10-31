@@ -190,5 +190,7 @@ public class LevelGenerator : MonoBehaviour
             position.x = origin;
             position += Vector3Int.down;
         }
+
+        
     }
 }

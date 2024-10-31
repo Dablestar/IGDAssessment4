@@ -102,9 +102,19 @@ public class PacStudentController : MonoBehaviour
                     posY++;
                     break;
                 case Direction.Left:
+                    if (posX <= -1)
+                    {
+                        Teleport();
+                        break;
+                    }
                     posX--;
                     break;
                 case Direction.Right:
+                    if (posX >= 28)
+                    {
+                        Teleport();
+                        break;
+                    }
                     posX++;
                     break;
             }
@@ -175,6 +185,11 @@ public class PacStudentController : MonoBehaviour
         {
             StartCoroutine(KillPlayer());
         }
+
+        if (other.gameObject.tag.Equals("TP"))
+        {
+            Teleport();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -189,5 +204,23 @@ public class PacStudentController : MonoBehaviour
     public static void AddScore(int addScore)
     {
         score += addScore;
+    }
+
+    private void Teleport()
+    {
+        Direction tempInput = lastInput;
+        
+        if (posX <= -1)
+        {
+            posX = 27;
+            gameObject.transform.localPosition = new Vector3(27f, -14.75f, -1);
+            Stop();
+        }
+        else if(posX >= 28)
+        {
+            posX = 0;
+            gameObject.transform.localPosition = new Vector3(0, -14.75f, -1);
+            Stop();
+        }
     }
 }

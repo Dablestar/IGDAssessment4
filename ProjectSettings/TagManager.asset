@@ -8,6 +8,8 @@ TagManager:
   - Special
   - Bonus
   - Enemy
+  - Walls
+  - TP
   layers:
   - Default
   - TransparentFX
