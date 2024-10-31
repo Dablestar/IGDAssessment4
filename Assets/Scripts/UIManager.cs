@@ -12,10 +12,12 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    private int score;
     private double time;
     [SerializeField] private TMP_Text timeText;
+    [SerializeField] private static TMP_Text scoreText;
+    
     [SerializeField] private bool isPlaying;
+    
     private Button levelChangeBtn;
     
     private static UIManager _manager;
@@ -71,7 +73,6 @@ public class UIManager : MonoBehaviour
     private void Init()
     {
         time = 0f;
-        score = 0;
         Time.timeScale = 0;
         isPlaying = false;
         timeText = null;
@@ -83,6 +84,7 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1f;
         isPlaying = true;
         timeText = GameObject.Find("Timer").transform.Find("Time").GetComponentInChildren<TMP_Text>();
+        scoreText = GameObject.Find("Score").transform.Find("ScoreValue").GetComponentInChildren<TMP_Text>();
 
         Button btn = GameObject.Find("Button").GetComponent<Button>();
         btn.onClick.AddListener(_manager.MoveToStartScene);
@@ -94,7 +96,10 @@ public class UIManager : MonoBehaviour
     {
         
     }
-    
-    
+
+    public static void SetScoreText(int score)
+    {
+        scoreText.text = score.ToString();
+    }
     
 }

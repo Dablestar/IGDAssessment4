@@ -15,28 +15,26 @@ public class PalletManager : MonoBehaviour
         source = GameObject.Find("FXPlayer").gameObject.GetComponent<AudioSource>();
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other.gameObject.name);
         if (other.gameObject.tag.Equals("Player"))
         {
             source.clip = sound;
             source.Play();
-            if (gameObject.tag.Equals("normalPallet"))
+            switch (gameObject.tag)
             {
-                PacStudentController.AddScore(500);
+                case "Normal":
+                    PacStudentController.AddScore(10);
+                    break;
+                case "Bonus":
+                    PacStudentController.AddScore(100);
+                    break;
+                case "SpecialPallet":
+                    StartCoroutine(EnemyController.WeakenEnemy());
+                    break;
             }
-
-            if (gameObject.tag.Equals("specialPallet"))
-            {
-                StartCoroutine(EnemyController.WeakenEnemy());
-            }
-
-            if (gameObject.tag.Equals("bonusPallet"))
-            {
-                PacStudentController.AddScore(5000);
-            }
-            Destroy(this);
+            UIManager.SetScoreText(PacStudentController.Score);
+            Destroy(gameObject);
         }
     }
 }

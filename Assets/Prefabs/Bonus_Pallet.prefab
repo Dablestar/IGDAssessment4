@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3314945112982688398}
   - component: {fileID: 6743714511133621251}
   - component: {fileID: 5692314648781813049}
-  - component: {fileID: 2872043940858977413}
   m_Layer: 0
   m_Name: Bonus_Pallet
   m_TagString: Bonus
@@ -170,15 +169,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sound: {fileID: 8300000, guid: 1b46ae3bb8b8bf040a05d6024953df00, type: 3}
---- !u!114 &2872043940858977413
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 303191434837830544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 337ce8a024c4853419f5ee21f6516f6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

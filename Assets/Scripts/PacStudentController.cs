@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using dir;
+using Unity.VisualScripting;
 using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,22 +10,37 @@ using UnityEngine.UIElements;
 public class PacStudentController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
+    private AudioSource source;
     [SerializeField] private List<AudioClip> footstepSoundEffects;
     [SerializeField] private AudioClip onPlayerHitSound;
     [SerializeField] private AudioClip onWallHitSound;
     [SerializeField] private Animator studentAnim;
     [SerializeField] private ParticleSystem movementParticle;
-
-
+    private static int playerLife = 3;
+    public static int PlayerLife
+    {
+        get { return playerLife;}
+        set { playerLife = value; }
+    }
+    
     
     [SerializeField]private int posX, posY;
-    static int score { get; set; }
+    private static int score;
+    public static int Score
+    {
+        get { return score; }
+        set { score = value; }
+    }
 
     private AudioSource studentSound;
 
     private bool isWalking;
 
-    private Tweener tweener;
+    private static Tweener studentTweener;
+    public static Tweener StudentTweener
+    {
+        get { return studentTweener; }
+    }
 
     private Direction lastInput;
     private Direction currentInput;
@@ -35,7 +51,7 @@ public class PacStudentController : MonoBehaviour
         moveSpeed = 0.5f;
         score = 0;
         studentSound = gameObject.GetComponent<AudioSource>();
-        tweener = gameObject.GetComponent<Tweener>();
+        studentTweener = gameObject.GetComponent<Tweener>();
         lastInput = Direction.None;
         StartCoroutine(PlayFootworkAudio());
     }
@@ -72,7 +88,7 @@ public class PacStudentController : MonoBehaviour
             moveSpeed = 0.5f;
         }
 
-        if (tweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)
+        if (studentTweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)
         {
             movementParticle.Play();
             currentInput = lastInput;
@@ -94,12 +110,6 @@ public class PacStudentController : MonoBehaviour
         }
         
     }
-
-    public static void AddScore(int amount)
-    {
-        score += amount;
-    }
-
 
     private IEnumerator PlayFootworkAudio()
     {
@@ -130,6 +140,10 @@ public class PacStudentController : MonoBehaviour
         moveSpeed = 0f;
         studentAnim.SetInteger("movingDirection", 1);
         isWalking = false;
+        currentInput = Direction.None;
+        lastInput = Direction.None;
+        studentSound.Stop();
+        studentTweener.AbortTween();
     }
 
     
@@ -140,46 +154,30 @@ public class PacStudentController : MonoBehaviour
         studentAnim.SetTrigger("isDead");
         studentSound.clip = onPlayerHitSound;
         studentSound.Play();
-        if (ObjectSpawner.Respawn())
+        if (ObjectSpawner.Respawn(gameObject.transform))
         {
             yield return new WaitForSeconds(1f);
-            ObjectSpawner.PlayerLife--;
-            Destroy(this);
+            PlayerLife--;
         }
         else
         {
-            Destroy(this);
             Application.Quit();
         }
-
-        yield return new WaitForSeconds(1f);
+        posX = 1;
+        posY = 1;
+        yield return new WaitForSeconds(3f);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag.Equals("Enemy"))
         {
-            Stop();
-            studentAnim.SetTrigger(3);
-            studentSound.clip = onPlayerHitSound;
-            studentSound.Play();
-            if (ObjectSpawner.Respawn())
-            {
-                Destroy(this);
-                ObjectSpawner.PlayerLife--;
-            }
-            else
-            {
-                Destroy(this);
-                Application.Quit();
-            }
+            StartCoroutine(KillPlayer());
         }
-        else if (other.gameObject.tag.Equals("Walls"))
-        {
-            transform.Rotate(90f, 0f, 0f);
-            studentSound.clip = onWallHitSound;
-            Stop();
-            studentSound.Play();
-        }
+    }
+
+    public static void AddScore(int addScore)
+    {
+        score += addScore;
     }
 }

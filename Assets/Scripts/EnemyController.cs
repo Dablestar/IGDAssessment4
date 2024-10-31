@@ -38,6 +38,7 @@ public class EnemyController : MonoBehaviour
         {
             isWeaken = true;
         }
+        Debug.Log("IsWeaken");
         enemyAnim.SetTrigger(0);
         enemyAnim.SetFloat(1, 2.5f);
         yield return new WaitForSeconds(7f);

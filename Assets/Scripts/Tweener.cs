@@ -17,20 +17,20 @@ public class Tweener : MonoBehaviour {
     }
     
     void Update() {
-        Tween activeTween;
-        for (int i = activeTweens.Count-1; i >=0; i--)
-        {
-            activeTween = activeTweens[i];
-            if (Vector2.Distance(activeTween.Target.position, activeTween.EndPos) > 0.1f) {
-                float timeFraction = (Time.time - activeTween.StartTime) / activeTween.Duration;
-                activeTween.Target.position = Vector2.Lerp(activeTween.StartPos,
-                    activeTween.EndPos,
-                    timeFraction);                
-            } else {
-                activeTween.Target.position = activeTween.EndPos;
-                activeTweens.RemoveAt(i);
+            Tween activeTween;
+            for (int i = activeTweens.Count-1; i >=0; i--)
+            {
+                activeTween = activeTweens[i];
+                if (Vector2.Distance(activeTween.Target.position, activeTween.EndPos) > 0.1f) {
+                    float timeFraction = (Time.time - activeTween.StartTime) / activeTween.Duration;
+                    activeTween.Target.position = Vector2.Lerp(activeTween.StartPos,
+                        activeTween.EndPos,
+                        timeFraction);                
+                } else {
+                    activeTween.Target.position = activeTween.EndPos;
+                    activeTweens.RemoveAt(i);
+                }
             }
-        }
     }
 
     public bool AddTween(Transform targetObject, Vector2 startPos, Vector2 endPos, float duration)
@@ -95,5 +95,10 @@ public class Tweener : MonoBehaviour {
             default:
                 return false;
         }
+    }
+
+    public void AbortTween()
+    {
+        activeTweens.Clear();
     }
 }
