@@ -21,9 +21,9 @@ public class Tweener : MonoBehaviour {
             for (int i = activeTweens.Count-1; i >=0; i--)
             {
                 activeTween = activeTweens[i];
-                if (Vector2.Distance(activeTween.Target.position, activeTween.EndPos) > 0.1f) {
+                if (Vector3.Distance(activeTween.Target.position, activeTween.EndPos) > 0.1f) {
                     float timeFraction = (Time.time - activeTween.StartTime) / activeTween.Duration;
-                    activeTween.Target.position = Vector2.Lerp(activeTween.StartPos,
+                    activeTween.Target.position = Vector3.Lerp(activeTween.StartPos,
                         activeTween.EndPos,
                         timeFraction);                
                 } else {
@@ -37,7 +37,7 @@ public class Tweener : MonoBehaviour {
     {
         if (!TweenExists(targetObject))
         {
-            activeTweens.Add(new Tween(targetObject, startPos, endPos, Time.time, duration));
+            activeTweens.Add(new Tween(targetObject, new Vector3(startPos.x, startPos.y, -1), new Vector3(endPos.x, endPos.y, -1), Time.time, duration));
             return true;
         }
         return false;

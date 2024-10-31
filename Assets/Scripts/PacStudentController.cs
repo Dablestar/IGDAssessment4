@@ -10,7 +10,8 @@ using UnityEngine.UIElements;
 public class PacStudentController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
-    private AudioSource source;
+    private AudioSource effectSource;
+    private AudioSource studentSound;
     [SerializeField] private List<AudioClip> footstepSoundEffects;
     [SerializeField] private AudioClip onPlayerHitSound;
     [SerializeField] private AudioClip onWallHitSound;
@@ -32,7 +33,7 @@ public class PacStudentController : MonoBehaviour
         set { score = value; }
     }
 
-    private AudioSource studentSound;
+    
 
     private bool isWalking;
 
@@ -108,7 +109,6 @@ public class PacStudentController : MonoBehaviour
                     break;
             }
         }
-        
     }
 
     private IEnumerator PlayFootworkAudio()
@@ -142,7 +142,6 @@ public class PacStudentController : MonoBehaviour
         isWalking = false;
         currentInput = Direction.None;
         lastInput = Direction.None;
-        studentSound.Stop();
         studentTweener.AbortTween();
     }
 
@@ -151,6 +150,7 @@ public class PacStudentController : MonoBehaviour
     private IEnumerator KillPlayer()
     {
         Stop();
+        gameObject.GetComponent<Collider2D>().enabled = false;
         studentAnim.SetTrigger("isDead");
         studentSound.clip = onPlayerHitSound;
         studentSound.Play();
@@ -158,7 +158,7 @@ public class PacStudentController : MonoBehaviour
         {
             yield return new WaitForSeconds(1f);
             PlayerLife--;
-        }
+        } 
         else
         {
             Application.Quit();
@@ -166,6 +166,7 @@ public class PacStudentController : MonoBehaviour
         posX = 1;
         posY = 1;
         yield return new WaitForSeconds(3f);
+        gameObject.GetComponent<Collider2D>().enabled = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -173,6 +174,15 @@ public class PacStudentController : MonoBehaviour
         if (other.gameObject.tag.Equals("Enemy"))
         {
             StartCoroutine(KillPlayer());
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag.Equals("Walls"))
+        {
+            
+            Stop();
         }
     }
 
