@@ -47,8 +47,8 @@ public class Tweener : MonoBehaviour {
         movingArr = new List<Vector2>()
         {
             new(targetObject.transform.position.x, targetObject.transform.position.y+1),
-            new(targetObject.transform.position.x, targetObject.transform.position.y-1),
             new(targetObject.transform.position.x-1, targetObject.transform.position.y),
+            new(targetObject.transform.position.x, targetObject.transform.position.y-1),
             new(targetObject.transform.position.x+1, targetObject.transform.position.y)
         };
         if (IsWalkable(direction, x, y) && !TweenExists(targetObject) && direction != Direction.None)
@@ -69,7 +69,7 @@ public class Tweener : MonoBehaviour {
         }
         return false;
     }
-    private bool IsWalkable(Direction direction, int x, int y)
+    public bool IsWalkable(Direction direction, int x, int y)
     {
         if (x == -1 || x == map.Count)
         {

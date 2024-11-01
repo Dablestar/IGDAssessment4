@@ -19,31 +19,33 @@ public class PacStudentController : MonoBehaviour
     [SerializeField] private ParticleSystem movementParticle;
     private static int playerLife = 3;
     private static int palletCount = 0;
+    [SerializeField] private int posX, posY;
+
     public static int PlayerLife
     {
-        get { return playerLife;}
+        get { return playerLife; }
         set { playerLife = value; }
     }
+
     public static int PalletCount
     {
-        get { return palletCount;}
+        get { return palletCount; }
         set { palletCount = value; }
     }
-    
-    
-    [SerializeField]private int posX, posY;
+
     private static int score;
+
     public static int Score
     {
         get { return score; }
         set { score = value; }
     }
 
-    
-
     private bool isWalking;
+    private bool isDead;
 
     private static Tweener studentTweener;
+
     public static Tweener StudentTweener
     {
         get { return studentTweener; }
@@ -55,9 +57,9 @@ public class PacStudentController : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        moveSpeed = 0.5f;
         score = 0;
         studentSound = gameObject.GetComponent<AudioSource>();
+        effectSource = GameObject.Find("FXPlayer").GetComponent<AudioSource>();
         studentTweener = gameObject.GetComponent<Tweener>();
         lastInput = Direction.None;
         StartCoroutine(PlayFootworkAudio());
@@ -65,7 +67,7 @@ public class PacStudentController : MonoBehaviour
 
     private void Start()
     {
-        Stop();
+        isDead = false;
         posX = 1;
         posY = 1;
     }
@@ -73,47 +75,103 @@ public class PacStudentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        studentAnim.SetFloat("moveSpeed", moveSpeed);
-        if (Input.GetKeyDown(KeyCode.W))
+        Debug.Log($"isWalking : {isWalking}");
+        if (!isDead)
         {
-            lastInput = Direction.Up;
-            moveSpeed = 0.5f;
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            lastInput = Direction.Left;
-            moveSpeed = 0.5f;
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            lastInput = Direction.Down;
-            moveSpeed = 0.5f;
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            lastInput = Direction.Right;
-            moveSpeed = 0.5f;
+            studentAnim.SetFloat("moveSpeed", moveSpeed);
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                lastInput = Direction.Up;
+                moveSpeed = 0.5f;
+            }
+
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                lastInput = Direction.Left;
+                moveSpeed = 0.5f;
+            }
+
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                lastInput = Direction.Down;
+                moveSpeed = 0.5f;
+            }
+
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                lastInput = Direction.Right;
+                moveSpeed = 0.5f;
+            }
         }
 
-        if (studentTweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)
+        // if (studentTweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)
+        // {
+        //     movementParticle.Play();
+        //     isWalking = true;
+        //     currentInput = lastInput;
+        //     switch (lastInput)
+        //     {
+        //         case Direction.Up:
+        //             posY--;
+        //             break;
+        //         case Direction.Down:
+        //             posY++;
+        //             break;
+        //         case Direction.Left:
+        //             posX--;
+        //             break;
+        //         case Direction.Right:
+        //             posX++;
+        //             break;
+        //     }
+        // }
+        if (!studentTweener.TweenExists(transform) && lastInput != Direction.None)
         {
-            movementParticle.Play();
-            isWalking = true;
-            currentInput = lastInput;
-            switch (lastInput)
+            if (studentTweener.IsWalkable(lastInput, posX, posY))
             {
-                case Direction.Up:
-                    posY--;
-                    break;
-                case Direction.Down:
-                    posY++;
-                    break;
-                case Direction.Left:
-                    posX--;
-                    break;
-                case Direction.Right:
-                    posX++;
-                    break;
+                isWalking = true;
+                studentAnim.SetInteger("movingDirection", (int)lastInput + 1);
+                currentInput = lastInput;
+                studentTweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY);
+                switch (lastInput)
+                {
+                    case Direction.Up:
+                        posY--;
+                        break;
+                    case Direction.Down:
+                        posY++;
+                        break;
+                    case Direction.Left:
+                        posX--;
+                        break;
+                    case Direction.Right:
+                        posX++;
+                        break;
+                }
+            }
+            else if (studentTweener.IsWalkable(currentInput, posX, posY))
+            {
+                isWalking = true;
+                studentTweener.Move(transform, transform.position, currentInput, moveSpeed, posX, posY);
+                switch (currentInput)
+                {
+                    case Direction.Up:
+                        posY--;
+                        break;
+                    case Direction.Down:
+                        posY++;
+                        break;
+                    case Direction.Left:
+                        posX--;
+                        break;
+                    case Direction.Right:
+                        posX++;
+                        break;
+                }
+            }
+            else
+            {
+                Stop();
             }
         }
     }
@@ -135,20 +193,21 @@ public class PacStudentController : MonoBehaviour
                     studentSound.Play();
                 }
             }
-
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(moveSpeed);
         }
     }
 
-    
 
     private void Stop()
     {
-        moveSpeed = 0f;
+        Debug.Log("Stop()");
         isWalking = false;
+        moveSpeed = 0f;
         currentInput = Direction.None;
         lastInput = Direction.None;
         studentTweener.AbortTween();
+        effectSource.clip = onWallHitSound;
+        effectSource.Play();
     }
 
     private void Walk()
@@ -156,9 +215,7 @@ public class PacStudentController : MonoBehaviour
         moveSpeed = 0.5f;
         isWalking = true;
     }
-
     
-
     private IEnumerator KillPlayer()
     {
         Stop();
@@ -170,11 +227,12 @@ public class PacStudentController : MonoBehaviour
         {
             yield return new WaitForSeconds(1f);
             PlayerLife--;
-        } 
+        }
         else
         {
             Application.Quit();
         }
+
         posX = 1;
         posY = 1;
         yield return new WaitForSeconds(3f);
@@ -187,9 +245,10 @@ public class PacStudentController : MonoBehaviour
         {
             if (!EnemyController.isWeaken)
             {
-                StartCoroutine(KillPlayer());    
+                StartCoroutine(KillPlayer());
             }
         }
+
         if (other.gameObject.tag.Equals("TP"))
         {
             Debug.Log("Teleporter Triggered");
@@ -213,7 +272,7 @@ public class PacStudentController : MonoBehaviour
     private void Teleport()
     {
         Direction tempInput = lastInput;
-        Stop();   
+        Stop();
         if (posX <= -1)
         {
             posX = 27;
@@ -223,13 +282,14 @@ public class PacStudentController : MonoBehaviour
             {
                 posX--;
                 lastInput = tempInput;
-            }else
+            }
+            else
             {
                 Debug.Log("Glitch");
                 Stop();
             }
         }
-        else if(posX >= 28)
+        else if (posX >= 28)
         {
             posX = 0;
             gameObject.transform.localPosition = new Vector3(0, -14.75f, -1);
@@ -245,8 +305,5 @@ public class PacStudentController : MonoBehaviour
                 Stop();
             }
         }
-
-        
-
     }
 }
