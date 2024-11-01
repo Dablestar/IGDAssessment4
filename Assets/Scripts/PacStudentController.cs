@@ -21,6 +21,8 @@ public class PacStudentController : MonoBehaviour
     private static int palletCount = 0;
     [SerializeField] private int posX, posY;
 
+    private UIManager _manager;
+
     public static int PlayerLife
     {
         get { return playerLife; }
@@ -60,6 +62,7 @@ public class PacStudentController : MonoBehaviour
         score = 0;
         studentSound = gameObject.GetComponent<AudioSource>();
         effectSource = GameObject.Find("FXPlayer").GetComponent<AudioSource>();
+        _manager = GameObject.Find("Managers").GetComponent<UIManager>();
         studentTweener = gameObject.GetComponent<Tweener>();
         lastInput = Direction.None;
         StartCoroutine(PlayFootworkAudio());
@@ -75,56 +78,36 @@ public class PacStudentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log($"isWalking : {isWalking}");
-        if (!isDead)
+        if (UIManager.IsPlaying)
         {
-            studentAnim.SetFloat("moveSpeed", moveSpeed);
-            if (Input.GetKeyDown(KeyCode.W))
+            if (!isDead)
             {
-                lastInput = Direction.Up;
-                moveSpeed = 0.5f;
-            }
+                studentAnim.SetFloat("moveSpeed", moveSpeed);
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    lastInput = Direction.Up;
+                    moveSpeed = 0.5f;
+                }
 
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                lastInput = Direction.Left;
-                moveSpeed = 0.5f;
-            }
+                if (Input.GetKeyDown(KeyCode.A))
+                {
+                    lastInput = Direction.Left;
+                    moveSpeed = 0.5f;
+                }
 
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                lastInput = Direction.Down;
-                moveSpeed = 0.5f;
-            }
+                if (Input.GetKeyDown(KeyCode.S))
+                {
+                    lastInput = Direction.Down;
+                    moveSpeed = 0.5f;
+                }
 
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                lastInput = Direction.Right;
-                moveSpeed = 0.5f;
+                if (Input.GetKeyDown(KeyCode.D))
+                {
+                    lastInput = Direction.Right;
+                    moveSpeed = 0.5f;
+                }
             }
         }
-
-        // if (studentTweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)
-        // {
-        //     movementParticle.Play();
-        //     isWalking = true;
-        //     currentInput = lastInput;
-        //     switch (lastInput)
-        //     {
-        //         case Direction.Up:
-        //             posY--;
-        //             break;
-        //         case Direction.Down:
-        //             posY++;
-        //             break;
-        //         case Direction.Left:
-        //             posX--;
-        //             break;
-        //         case Direction.Right:
-        //             posX++;
-        //             break;
-        //     }
-        // }
         if (!studentTweener.TweenExists(transform) && lastInput != Direction.None)
         {
             if (studentTweener.IsWalkable(lastInput, posX, posY))
@@ -246,6 +229,10 @@ public class PacStudentController : MonoBehaviour
             if (!EnemyController.isWeaken)
             {
                 StartCoroutine(KillPlayer());
+            }
+            else
+            {
+                AddScore(300);
             }
         }
 

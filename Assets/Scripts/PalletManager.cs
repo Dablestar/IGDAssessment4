@@ -8,11 +8,13 @@ public class PalletManager : MonoBehaviour
     private AudioSource source;
 
     [SerializeField] private AudioClip sound;
+    private UIManager _manager;
 
     // Start is called before the first frame update
     void Start()
     {
         source = GameObject.Find("FXPlayer").gameObject.GetComponent<AudioSource>();
+        _manager = GameObject.Find("Managers").gameObject.GetComponent<UIManager>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -29,8 +31,9 @@ public class PalletManager : MonoBehaviour
                 case "Bonus":
                     PacStudentController.AddScore(100);
                     break;
-                case "SpecialPallet":
+                case "Special":
                     StartCoroutine(EnemyController.WeakenEnemy());
+                    StartCoroutine(_manager.OnGhostScared());
                     break;
             }
             UIManager.SetScoreText(PacStudentController.Score);

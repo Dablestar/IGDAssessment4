@@ -13,7 +13,7 @@ public class EnemyController : MonoBehaviour
         Recovering
     }
     private float moveSpeed = 2f;
-    [SerializeField] private static Animator enemyAnim;
+    private static Animator enemyAnim;
     public static bool isWeaken { get; set; }
 
     private AudioSource soundPlayer;
@@ -23,14 +23,16 @@ public class EnemyController : MonoBehaviour
     private List<GameObject> enemyList;
 
     public static EnemyStatus CurrentStatus { get; set; }
+    
 
 
     // Start is called before the first frame update
     void Start()
     {
         isWeaken = false;
+        enemyAnim = gameObject.GetComponent<Animator>();
         CurrentStatus = EnemyStatus.Walking;
-        enemyAnim.SetFloat(1, moveSpeed);
+        enemyAnim.SetFloat("moveSpeed", moveSpeed);
     }
 
     // Update is called once per frame
@@ -49,14 +51,14 @@ public class EnemyController : MonoBehaviour
             isWeaken = true;
         }
         Debug.Log("IsWeaken");
-        enemyAnim.SetTrigger(0);
-        enemyAnim.SetFloat(1, 2.5f);
+        enemyAnim.SetTrigger("isWeaken");
         CurrentStatus = EnemyStatus.Weaken;
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(7f);
         //set animation recovering
+        enemyAnim.SetTrigger("isOnRecover");
         CurrentStatus = EnemyStatus.Recovering;
-        yield return new WaitForSeconds(5f);
-        enemyAnim.SetTrigger(0);
+        yield return new WaitForSeconds(3f);
+        enemyAnim.SetTrigger("isWeaken");
         isWeaken = false;
     }
     
