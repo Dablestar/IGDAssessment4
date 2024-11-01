@@ -85,7 +85,6 @@ public class LevelGenerator : MonoBehaviour
                 switch (mapInfo[y][x])
                 {
                     case "0":
-                        Debug.Log($"x : {x}, y: {y}");
                         Instantiate(tilePalette[0], position, Quaternion.identity, wallParent.transform);
                         break;
 
@@ -147,19 +146,18 @@ public class LevelGenerator : MonoBehaviour
                         Instantiate(tilePalette[1], position + new Vector3Int(0, 0, -1), rotation, wallParent.transform);
                         break;
                     case "5":
-                        Debug.Log($"x : {x}, y: {y}");
                         Instantiate(tilePalette[0], position, Quaternion.identity, wallParent.transform);
                         position.z --;
                         Instantiate(tilePalette[5], position, Quaternion.identity, palletParent.transform);
+                        PacStudentController.PalletCount++;
                         break;
                     case "6":
-                        Debug.Log($"x : {x}, y: {y}");
                         Instantiate(tilePalette[0], position, Quaternion.identity, wallParent.transform);
                         position.z --;
                         Instantiate(tilePalette[6], position, Quaternion.identity, palletParent.transform);
+                        PacStudentController.PalletCount++;
                         break;
                     case "7":
-                        Debug.Log($"x : {x}, y: {y}");
                         if (y == mapInfo.Count - 1)
                         {
                             rotation *= Quaternion.Euler(0, 0, 90f);
@@ -178,8 +176,6 @@ public class LevelGenerator : MonoBehaviour
                         }
 
                         Instantiate(tilePalette[7], position, rotation, wallParent.transform);
-                        break;
-                    default:
                         break;
                 }
 

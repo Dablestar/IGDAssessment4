@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+
+    public enum EnemyStatus
+    {
+        Walking,
+        Weaken,
+        Recovering
+    }
     private float moveSpeed = 2f;
     [SerializeField] private static Animator enemyAnim;
     public static bool isWeaken { get; set; }
@@ -14,12 +21,15 @@ public class EnemyController : MonoBehaviour
     private AudioSource backgroundSoundPlayer;
 
     private List<GameObject> enemyList;
-    
-    
+
+    public static EnemyStatus CurrentStatus { get; set; }
+
+
     // Start is called before the first frame update
     void Start()
     {
         isWeaken = false;
+        CurrentStatus = EnemyStatus.Walking;
         enemyAnim.SetFloat(1, moveSpeed);
     }
 
@@ -41,11 +51,30 @@ public class EnemyController : MonoBehaviour
         Debug.Log("IsWeaken");
         enemyAnim.SetTrigger(0);
         enemyAnim.SetFloat(1, 2.5f);
-        yield return new WaitForSeconds(7f);
+        CurrentStatus = EnemyStatus.Weaken;
+        yield return new WaitForSeconds(5f);
         //set animation recovering
-        yield return new WaitForSeconds(3f);
+        CurrentStatus = EnemyStatus.Recovering;
+        yield return new WaitForSeconds(5f);
         enemyAnim.SetTrigger(0);
         isWeaken = false;
+    }
+    
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag.Equals("Player"))
+        {
+            if (isWeaken)
+            {
+                StartCoroutine(KillEnemy());    
+            }
+        }
+    }
+
+    IEnumerator KillEnemy()
+    {
+        Debug.Log("Killed");
+        yield return new WaitForSeconds(1f);
     }
     
     

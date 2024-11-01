@@ -18,10 +18,16 @@ public class PacStudentController : MonoBehaviour
     [SerializeField] private Animator studentAnim;
     [SerializeField] private ParticleSystem movementParticle;
     private static int playerLife = 3;
+    private static int palletCount = 0;
     public static int PlayerLife
     {
         get { return playerLife;}
         set { playerLife = value; }
+    }
+    public static int PalletCount
+    {
+        get { return palletCount;}
+        set { palletCount = value; }
     }
     
     
@@ -92,6 +98,7 @@ public class PacStudentController : MonoBehaviour
         if (studentTweener.Move(transform, transform.position, lastInput, moveSpeed, posX, posY) && lastInput != Direction.None)
         {
             movementParticle.Play();
+            isWalking = true;
             currentInput = lastInput;
             switch (lastInput)
             {
@@ -102,19 +109,9 @@ public class PacStudentController : MonoBehaviour
                     posY++;
                     break;
                 case Direction.Left:
-                    if (posX <= -1)
-                    {
-                        Teleport();
-                        break;
-                    }
                     posX--;
                     break;
                 case Direction.Right:
-                    if (posX >= 28)
-                    {
-                        Teleport();
-                        break;
-                    }
                     posX++;
                     break;
             }
@@ -148,11 +145,16 @@ public class PacStudentController : MonoBehaviour
     private void Stop()
     {
         moveSpeed = 0f;
-        studentAnim.SetInteger("movingDirection", 1);
         isWalking = false;
         currentInput = Direction.None;
         lastInput = Direction.None;
         studentTweener.AbortTween();
+    }
+
+    private void Walk()
+    {
+        moveSpeed = 0.5f;
+        isWalking = true;
     }
 
     
@@ -183,11 +185,14 @@ public class PacStudentController : MonoBehaviour
     {
         if (other.gameObject.tag.Equals("Enemy"))
         {
-            StartCoroutine(KillPlayer());
+            if (!EnemyController.isWeaken)
+            {
+                StartCoroutine(KillPlayer());    
+            }
         }
-
         if (other.gameObject.tag.Equals("TP"))
         {
+            Debug.Log("Teleporter Triggered");
             Teleport();
         }
     }
@@ -196,7 +201,6 @@ public class PacStudentController : MonoBehaviour
     {
         if (other.gameObject.tag.Equals("Walls"))
         {
-            
             Stop();
         }
     }
@@ -209,18 +213,40 @@ public class PacStudentController : MonoBehaviour
     private void Teleport()
     {
         Direction tempInput = lastInput;
-        
+        Stop();   
         if (posX <= -1)
         {
             posX = 27;
             gameObject.transform.localPosition = new Vector3(27f, -14.75f, -1);
-            Stop();
+            Walk();
+            if (studentTweener.Move(transform, transform.position, tempInput, moveSpeed, posX, posY))
+            {
+                posX--;
+                lastInput = tempInput;
+            }else
+            {
+                Debug.Log("Glitch");
+                Stop();
+            }
         }
         else if(posX >= 28)
         {
             posX = 0;
             gameObject.transform.localPosition = new Vector3(0, -14.75f, -1);
-            Stop();
+            Walk();
+            if (studentTweener.Move(transform, transform.position, tempInput, moveSpeed, posX, posY))
+            {
+                posX++;
+                lastInput = tempInput;
+            }
+            else
+            {
+                Debug.Log("Glitch");
+                Stop();
+            }
         }
+
+        
+
     }
 }
