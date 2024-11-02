@@ -262,7 +262,6 @@ public class PacStudentController : MonoBehaviour
                 EnemyController temp = enemy.GetComponent<EnemyController>();
                 StartCoroutine(temp.WeakenEnemy());
             }
-
             StartCoroutine(_manager.OnGhostScared());
         }
 
@@ -272,15 +271,7 @@ public class PacStudentController : MonoBehaviour
             Teleport();
         }
     }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.tag.Equals("Walls"))
-        {
-            Stop();
-        }
-    }
-
+    
     public static void AddScore(int addScore)
     {
         score += addScore;

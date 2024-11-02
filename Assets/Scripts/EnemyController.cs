@@ -18,7 +18,7 @@ public class EnemyController : MonoBehaviour
 
     private Transform player;
     private Vector3 currentPlayerPosition;
-    private Direction currentDirection;
+    [SerializeField] private Direction currentDirection;
     [SerializeField] private Direction lastDirection;
     [SerializeField] private List<Direction> availableDirections;
     private float moveSpeed = 2f;
@@ -110,7 +110,7 @@ public class EnemyController : MonoBehaviour
             else if (isWeaken)
             {
                 GetGhost1Behaviours();
-            }   
+            }
         }
     }
 
@@ -118,168 +118,149 @@ public class EnemyController : MonoBehaviour
     private void GetGhost1Behaviours()
     {
         availableDirections.Clear();
-        Vector3 temp = currentPlayerPosition - gameObject.transform.position;
-        Debug.Log(temp);
-        if (temp.x == 0 && temp.y > 0)
-        {
-            //up
-            availableDirections.Add(Direction.Down);
-        }
-        if (temp.x == 0 && temp.y < 0)
-        {
-            //down
-            availableDirections.Add(Direction.Up);
-        }
+        Vector3 temp = currentPlayerPosition - gameObject.transform.position; 
+    
+    if (temp.x == 0 && temp.y > 0) availableDirections.Add(Direction.Down); 
+    else if (temp.x == 0 && temp.y < 0) availableDirections.Add(Direction.Up); 
+    else if (temp.x > 0 && temp.y == 0) availableDirections.Add(Direction.Left); 
+    else if (temp.x < 0 && temp.y == 0) availableDirections.Add(Direction.Right); 
+    else if (temp.x > 0 && temp.y > 0) { availableDirections.Add(Direction.Down); availableDirections.Add(Direction.Left); }
+    else if (temp.x > 0 && temp.y < 0) { availableDirections.Add(Direction.Up); availableDirections.Add(Direction.Left); }
+    else if (temp.x < 0 && temp.y > 0) { availableDirections.Add(Direction.Down); availableDirections.Add(Direction.Right); }
+    else if (temp.x < 0 && temp.y < 0) { availableDirections.Add(Direction.Up); availableDirections.Add(Direction.Right); }
+    
+    availableDirections.RemoveAll(d => d == lastDirection);
+    availableDirections.RemoveAll(d => !enemyTweener.IsWalkable(d, posX, posY));
 
-        if (temp.x > 0 && temp.y == 0)
-        {
-            //right
-            availableDirections.Add(Direction.Left);
-        }
+    if (availableDirections.Count == 0)
+    {
+        Walk(lastDirection);
+    }
+    else
+    {
+        Direction selectedDirection = availableDirections[Random.Range(0, availableDirections.Count)];
+        Walk(selectedDirection);
+        lastDirection = currentDirection;
+    }
 
-        if (temp.x > 0 && temp.y > 0)
-        {
-            //upright
-            availableDirections.Add(Direction.Down);
-            availableDirections.Add(Direction.Left);
-        }
-
-        if (temp.x > 0 && temp.y < 0)
-        {
-            //downright
-            availableDirections.Add(Direction.Up);
-            availableDirections.Add(Direction.Left);
-        }
-
-        if (temp.x < 0 && temp.y == 0)
-        {
-            //left
-            availableDirections.Add(Direction.Right);
-        }
-
-        if (temp.x < 0 && temp.y < 0)
-        {
-            //downleft
-            availableDirections.Add(Direction.Up);
-            availableDirections.Add(Direction.Right);
-        }
-
-        if (temp.x < 0 && temp.y > 0)
-        {
-            //upleft
-            availableDirections.Add(Direction.Down);
-            availableDirections.Add(Direction.Right);
-        }
-        availableDirections.RemoveAll(tempDirection => !enemyTweener.IsWalkable(tempDirection, posX, posY));
-        if (availableDirections.Contains(lastDirection))
-        {
-            availableDirections.Remove(lastDirection);
-            if (availableDirections.Count == 0)
-            {
-                Walk(lastDirection);
-                (currentDirection, lastDirection) = (lastDirection, currentDirection);
-            }
-            else
-            {
-                Walk(availableDirections[0]);    
-            }
-        }else if (availableDirections.Count == 0)
-        {
-            
-        }
-        else
-        {
-            Walk(availableDirections[0]);
-        }
     }
 
     private void GetGhost2Behaviours()
     {
+        // availableDirections.Clear();
+        // Vector3 temp = currentPlayerPosition - gameObject.transform.position;
+        // Debug.Log(temp);
+        // if (temp.x == 0 && temp.y > 0)
+        // {
+        //     //up
+        //     availableDirections.Add(Direction.Up);
+        // }
+        // if (temp.x == 0 && temp.y < 0)
+        // {
+        //     //down
+        //     availableDirections.Add(Direction.Down);
+        // }
+        //
+        // if (temp.x > 0 && temp.y == 0)
+        // {
+        //     //right
+        //     availableDirections.Add(Direction.Right);
+        // }
+        //
+        // if (temp.x > 0 && temp.y > 0)
+        // {
+        //     //upright
+        //     availableDirections.Add(Direction.Up);
+        //     availableDirections.Add(Direction.Right);
+        // }
+        //
+        // if (temp.x > 0 && temp.y < 0)
+        // {
+        //     //downright
+        //     availableDirections.Add(Direction.Down);
+        //     availableDirections.Add(Direction.Right);
+        // }
+        //
+        // if (temp.x < 0 && temp.y == 0)
+        // {
+        //     //left
+        //     availableDirections.Add(Direction.Left);
+        // }
+        //
+        // if (temp.x < 0 && temp.y < 0)
+        // {
+        //     //downleft
+        //     availableDirections.Add(Direction.Down);
+        //     availableDirections.Add(Direction.Left);
+        // }
+        //
+        // if (temp.x < 0 && temp.y > 0)
+        // {
+        //     //upleft
+        //     availableDirections.Add(Direction.Up);
+        //     availableDirections.Add(Direction.Left);
+        // }
+        // availableDirections.RemoveAll(tempDirection => !enemyTweener.IsWalkable(tempDirection, posX, posY));
+        // if (availableDirections.Contains(lastDirection))
+        // {
+        //     availableDirections.Remove(lastDirection);
+        //     if (availableDirections.Count == 0)
+        //     {
+        //         Walk(lastDirection);
+        //         (currentDirection, lastDirection) = (lastDirection, currentDirection);
+        //     }
+        //     else
+        //     {
+        //         Walk(availableDirections[0]);    
+        //     }
+        // }else if (availableDirections.Count == 0)
+        // {
+        //     Walk(lastDirection);
+        // }
+        // else
+        // {
+        //     Walk(availableDirections[0]);
+        // }
+
         availableDirections.Clear();
         Vector3 temp = currentPlayerPosition - gameObject.transform.position;
-        Debug.Log(temp);
-        if (temp.x == 0 && temp.y > 0)
-        {
-            //up
-            availableDirections.Add(Direction.Up);
-        }
-        if (temp.x == 0 && temp.y < 0)
-        {
-            //down
-            availableDirections.Add(Direction.Down);
-        }
+        
+        if (temp.x == 0 && temp.y > 0) availableDirections.Add(Direction.Up);
+        else if (temp.x == 0 && temp.y < 0) availableDirections.Add(Direction.Down);
+        else if (temp.x > 0 && temp.y == 0) availableDirections.Add(Direction.Right);
+        else if (temp.x < 0 && temp.y == 0) availableDirections.Add(Direction.Left);
+        else if (temp.x > 0 && temp.y > 0) { availableDirections.Add(Direction.Up); availableDirections.Add(Direction.Right); }
+        else if (temp.x > 0 && temp.y < 0) { availableDirections.Add(Direction.Down); availableDirections.Add(Direction.Right); }
+        else if (temp.x < 0 && temp.y > 0) { availableDirections.Add(Direction.Up); availableDirections.Add(Direction.Left); }
+        else if (temp.x < 0 && temp.y < 0) { availableDirections.Add(Direction.Down); availableDirections.Add(Direction.Left); }
+        
+        availableDirections.RemoveAll(d => d == lastDirection);
+        availableDirections.RemoveAll(d => !enemyTweener.IsWalkable(d, posX, posY));
 
-        if (temp.x > 0 && temp.y == 0)
-        {
-            //right
-            availableDirections.Add(Direction.Right);
-        }
-
-        if (temp.x > 0 && temp.y > 0)
-        {
-            //upright
-            availableDirections.Add(Direction.Up);
-            availableDirections.Add(Direction.Right);
-        }
-
-        if (temp.x > 0 && temp.y < 0)
-        {
-            //downright
-            availableDirections.Add(Direction.Down);
-            availableDirections.Add(Direction.Right);
-        }
-
-        if (temp.x < 0 && temp.y == 0)
-        {
-            //left
-            availableDirections.Add(Direction.Left);
-        }
-
-        if (temp.x < 0 && temp.y < 0)
-        {
-            //downleft
-            availableDirections.Add(Direction.Down);
-            availableDirections.Add(Direction.Left);
-        }
-
-        if (temp.x < 0 && temp.y > 0)
-        {
-            //upleft
-            availableDirections.Add(Direction.Up);
-            availableDirections.Add(Direction.Left);
-        }
-        availableDirections.RemoveAll(tempDirection => !enemyTweener.IsWalkable(tempDirection, posX, posY));
-        if (availableDirections.Contains(lastDirection))
-        {
-            availableDirections.Remove(lastDirection);
-            if (availableDirections.Count == 0)
-            {
-                Walk(lastDirection);
-                (currentDirection, lastDirection) = (lastDirection, currentDirection);
-            }
-            else
-            {
-                Walk(availableDirections[0]);    
-            }
-        }else if (availableDirections.Count == 0)
+        if (availableDirections.Count == 0)
         {
             Walk(lastDirection);
         }
         else
         {
-            Walk(availableDirections[0]);
+            Direction selectedDirection = availableDirections[Random.Range(0, availableDirections.Count)];
+            Walk(selectedDirection);
+            lastDirection = currentDirection;
         }
     }
 
     private void GetGhost3Behaviours()
     {
         availableDirections.Clear();
+        
         availableDirections.Add(Direction.Up);
         availableDirections.Add(Direction.Down);
         availableDirections.Add(Direction.Left);
         availableDirections.Add(Direction.Right);
-        availableDirections.Remove(lastDirection);
-        Walk(availableDirections[Random.Range(0, 2)]);
+        
+        availableDirections.RemoveAll(d => d == lastDirection);
+        availableDirections.RemoveAll(d => !enemyTweener.IsWalkable(d, posX, posY));
+        Walk(availableDirections[Random.Range(0, availableDirections.Count)]);
     }
 
     private void GetGhost4Behaviours()
@@ -287,43 +268,20 @@ public class EnemyController : MonoBehaviour
         Direction[] directionsList = new[] { Direction.Up, Direction.Left };
     }
 
-    private Direction GetWalkableDirection()
-    {
-        List<Direction> possibleDirection = new List<Direction>();
-        for (int i = 1; i <= 4; i++)
-        {
-            if (enemyTweener.IsWalkable((Direction)i, posX, posY))
-            {
-                possibleDirection.Add((Direction)i);
-            }
-        }
-        
-    }
-
     private void Walk(Direction direction)
     {
         if (!enemyTweener.TweenExists(transform))
         {
-            if (enemyTweener.IsWalkable(direction, posX, posY))
+            currentDirection = direction;
+            enemyAnim.SetInteger("movingDirection", (int)direction + 1);
+            enemyTweener.Move(transform, transform.position, direction, moveSpeed, posX, posY);
+            
+            switch (direction)
             {
-                currentDirection = direction;
-                enemyAnim.SetInteger("movingDirection", (int)direction + 1);
-                enemyTweener.Move(transform, transform.position, direction, moveSpeed, posX, posY);
-                switch (direction)
-                {
-                    case Direction.Up:
-                        posY--;
-                        break;
-                    case Direction.Down:
-                        posY++;
-                        break;
-                    case Direction.Left:
-                        posX--;
-                        break;
-                    case Direction.Right:
-                        posX++;
-                        break;
-                }
+                case Direction.Up: posY--; break;
+                case Direction.Down: posY++; break;
+                case Direction.Left: posX--; break;
+                case Direction.Right: posX++; break;
             }
         }
     }
@@ -354,11 +312,38 @@ public class EnemyController : MonoBehaviour
 
     public IEnumerator KillEnemy()
     {
+        gameObject.GetComponent<Collider2D>().enabled = false;
         enemyAnim.SetTrigger("isDead");
         isDead = true;
         CurrentStatus = EnemyStatus.Dead;
         //respawn to spawn point;
-        yield return new WaitForSeconds(5f);
         ObjectSpawner.EnemyRespawn(transform);
+        yield return new WaitForSeconds(5f);
+        enemyAnim.SetTrigger("isRevived");
+        switch (transform.GetChild(0).name)
+        {
+            case "Ghost1Canvas(Clone)":
+                posX = 6;
+                posY = 12;
+                break;
+            case "Ghost2Canvas(Clone)":
+                //Ghost2Behaviour
+                posX = 14;
+                posY = 12;
+                break;
+            case "Ghost3Canvas(Clone)":
+                //Ghost3Behaviour
+                posX = 14;
+                posY = 16;
+                break;
+            case "Ghost4Canvas(Clone)":
+                posX = 27;
+                posY = 27;
+                break;
+            default:
+                Debug.Log("Error");
+                break;
+        }
+        gameObject.GetComponent<Collider2D>().enabled = true;
     }
 }

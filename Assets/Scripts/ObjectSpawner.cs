@@ -64,6 +64,7 @@ public class ObjectSpawner : MonoBehaviour
     public static void EnemyRespawn(Transform enemy)
     {
         Vector3 spawnPoint;
+        EnemyController controller = enemy.GetComponent<EnemyController>();
         switch (enemy.transform.GetChild(0).name)
         {
             case "Ghost1Canvas(Clone)":

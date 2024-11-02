@@ -148,7 +148,7 @@ public class UIManager : MonoBehaviour
     
     public IEnumerator OnGhostScared()
     {
-        bg.Source.clip = bg.AudioList[2];
+        bg.PlayWeakenBackground();
         Debug.Log($"Coroutine : {nameof(OnGhostScared)}TimeScale : {Time.timeScale}");
         ghostWeakenText.gameObject.SetActive(true);
         ghostWeakenText.alignment = TextAlignmentOptions.Center;
