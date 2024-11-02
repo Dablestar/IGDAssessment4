@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Transform lifeDonutImages;
     [SerializeField] private TMP_Text bestRecord;
     private TMP_Text gameStartText;
+    private BGAudioPlayer bg;
 
     public static bool IsPlaying { get; set; }
     private Button levelChangeBtn;
@@ -40,7 +41,7 @@ public class UIManager : MonoBehaviour
 
         bestRecord = GameObject.Find("ScoreText").GetComponent<TMP_Text>();
         levelChangeBtn = GameObject.Find("Level1Btn").GetComponent<Button>();
-
+        
 
         TimeSpan bestTime = TimeSpan.FromSeconds(PlayerPrefs.GetFloat("Time"));
         int bestScore = PlayerPrefs.GetInt("Score");
@@ -101,6 +102,9 @@ public class UIManager : MonoBehaviour
         ghostWeakenText = GameObject.Find("ScaredTimer").transform.Find("ScaredTime")
             .GetComponentInChildren<TMP_Text>();
         ghostWeakenText.gameObject.SetActive(false);
+        
+        bg = GameObject.Find("BGPlayer").GetComponent<BGAudioPlayer>();
+        bg.PlayNormalBackground();
 
         Button btn = GameObject.Find("Button").GetComponent<Button>();
         btn.onClick.AddListener(_manager.MoveToStartScene);
@@ -113,7 +117,6 @@ public class UIManager : MonoBehaviour
 
     private void OnStartSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        
         bestRecord = GameObject.Find("ScoreText").GetComponent<TMP_Text>();
         levelChangeBtn = GameObject.Find("Level1Btn").GetComponent<Button>();
         
@@ -145,6 +148,7 @@ public class UIManager : MonoBehaviour
     
     public IEnumerator OnGhostScared()
     {
+        bg.Source.clip = bg.AudioList[2];
         Debug.Log($"Coroutine : {nameof(OnGhostScared)}TimeScale : {Time.timeScale}");
         ghostWeakenText.gameObject.SetActive(true);
         ghostWeakenText.alignment = TextAlignmentOptions.Center;
@@ -166,6 +170,7 @@ public class UIManager : MonoBehaviour
 
     public IEnumerator GameOver()
     {
+        bg.Source.Stop();
         PlayerPrefs.SetInt("Score", PacStudentController.Score);
         PlayerPrefs.SetFloat("Time", (float)time);
         IsPlaying = false;
@@ -183,7 +188,5 @@ public class UIManager : MonoBehaviour
         {
             Destroy(icon.gameObject);
         }
-        
-
     }
 }

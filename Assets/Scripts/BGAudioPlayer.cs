@@ -6,22 +6,35 @@ public class BGAudioPlayer : MonoBehaviour
 {
     [SerializeField] private List<AudioClip> audioList;
 
-    private AudioSource source;
-
-    private int index = 0;
-    void Start()
+    public List<AudioClip> AudioList
     {
-        source = gameObject.GetComponent<AudioSource>();
-        InvokeRepeating(nameof(TestBackgroundCoroutine), 0f,  10f);
+        get { return audioList; }
     }
 
+    private AudioSource source;
 
-    private void TestBackgroundCoroutine()
+    public AudioSource Source
     {
-        source.Stop();
-        source.clip = audioList[index];
-        if (index == 3) index = 0;
-        else index++;
+        get
+        {
+            return source;
+        }
+    }
+
+    void Awake()
+    {
+        source = gameObject.GetComponent<AudioSource>();
+    }
+
+    public void PlayWeakenBackground()
+    {
+        source.clip = audioList[2];
+        source.Play();
+    }
+
+    public void PlayNormalBackground()
+    {
+        source.clip = audioList[1];
         source.Play();
     }
 }

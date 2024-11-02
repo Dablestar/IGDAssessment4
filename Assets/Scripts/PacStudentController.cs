@@ -211,7 +211,7 @@ public class PacStudentController : MonoBehaviour
     
     private IEnumerator KillPlayer()
     {
-        Stop();
+        StopForTP();
         gameObject.GetComponent<Collider2D>().enabled = false;
         studentAnim.SetTrigger("isDead");
         studentSound.clip = onPlayerHitSound;
@@ -229,8 +229,10 @@ public class PacStudentController : MonoBehaviour
         }
         posX = 1;
         posY = 1;
-        
+        studentAnim.SetTrigger("isRespawned");
+        Debug.Log("isRespawned");
         gameObject.GetComponent<Collider2D>().enabled = true;
+        
     }
     private void OnTriggerEnter2D(Collider2D other)
     {

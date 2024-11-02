@@ -17,9 +17,7 @@ public class EnemyController : MonoBehaviour
     private Animator enemyAnim;
     private bool isWeaken { get; set; }
     private bool isDead { get; set; }
-    private AudioSource soundPlayer;
-
-    private AudioSource backgroundSoundPlayer;
+    private BGAudioPlayer bg;
 
     private List<GameObject> enemyList;
 
@@ -33,6 +31,7 @@ public class EnemyController : MonoBehaviour
         isWeaken = false;
         isDead = false;
         enemyAnim = gameObject.GetComponent<Animator>();
+        bg = GameObject.Find("BGPlayer").GetComponent<BGAudioPlayer>();
         CurrentStatus = EnemyStatus.Walking;
         enemyAnim.SetFloat("moveSpeed", moveSpeed);
         enemyAnim.SetInteger("movingDirection", 1);
@@ -48,7 +47,8 @@ public class EnemyController : MonoBehaviour
     }
 
     public IEnumerator WeakenEnemy()
-    {;
+    {
+        bg.PlayWeakenBackground();   
         Debug.Log("Enemy Weakened()");
         if (!isWeaken)
         {
@@ -65,6 +65,7 @@ public class EnemyController : MonoBehaviour
         CurrentStatus = EnemyStatus.Walking;
         isWeaken = false;
         Debug.Log("Recovered");
+        bg.PlayNormalBackground();
     }
     
     public IEnumerator KillEnemy()
