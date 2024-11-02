@@ -9,6 +9,7 @@ public class PalletManager : MonoBehaviour
 
     [SerializeField] private AudioClip sound;
     private UIManager _manager;
+    private bool isSpecialEffectRunning = false;
 
     // Start is called before the first frame update
     void Start()
@@ -27,17 +28,20 @@ public class PalletManager : MonoBehaviour
             {
                 case "Normal":
                     PacStudentController.AddScore(10);
+                    PacStudentController.PalletCount--;
+                    Debug.Log($"pallet Left : {PacStudentController.PalletCount}");
                     break;
                 case "Bonus":
                     PacStudentController.AddScore(100);
                     break;
                 case "Special":
-                    StartCoroutine(EnemyController.WeakenEnemy());
-                    StartCoroutine(_manager.OnGhostScared());
+                    PacStudentController.PalletCount--;
+                    Debug.Log($"pallet Left : {PacStudentController.PalletCount}");
                     break;
             }
-            UIManager.SetScoreText(PacStudentController.Score);
+            _manager.SetScoreText(PacStudentController.Score);
             Destroy(gameObject);
         }
     }
+    
 }

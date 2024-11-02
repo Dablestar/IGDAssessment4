@@ -10,19 +10,20 @@ public class EnemyController : MonoBehaviour
     {
         Walking,
         Weaken,
-        Recovering
+        Recovering,
+        Dead
     }
     private float moveSpeed = 2f;
-    private static Animator enemyAnim;
-    public static bool isWeaken { get; set; }
-
+    private Animator enemyAnim;
+    private bool isWeaken { get; set; }
+    private bool isDead { get; set; }
     private AudioSource soundPlayer;
 
     private AudioSource backgroundSoundPlayer;
 
     private List<GameObject> enemyList;
 
-    public static EnemyStatus CurrentStatus { get; set; }
+    public EnemyStatus CurrentStatus { get; set; }
     
 
 
@@ -30,27 +31,29 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         isWeaken = false;
+        isDead = false;
         enemyAnim = gameObject.GetComponent<Animator>();
         CurrentStatus = EnemyStatus.Walking;
         enemyAnim.SetFloat("moveSpeed", moveSpeed);
+        enemyAnim.SetInteger("movingDirection", 1);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isWeaken)
+        if (!isWeaken && !isDead)
         {
             moveSpeed = 2.5f;
         }
     }
 
-    public static IEnumerator WeakenEnemy()
-    {
+    public IEnumerator WeakenEnemy()
+    {;
+        Debug.Log("Enemy Weakened()");
         if (!isWeaken)
         {
             isWeaken = true;
         }
-        Debug.Log("IsWeaken");
         enemyAnim.SetTrigger("isWeaken");
         CurrentStatus = EnemyStatus.Weaken;
         yield return new WaitForSeconds(7f);
@@ -58,25 +61,19 @@ public class EnemyController : MonoBehaviour
         enemyAnim.SetTrigger("isOnRecover");
         CurrentStatus = EnemyStatus.Recovering;
         yield return new WaitForSeconds(3f);
-        enemyAnim.SetTrigger("isWeaken");
+        enemyAnim.SetTrigger("isRecovered");
+        CurrentStatus = EnemyStatus.Walking;
         isWeaken = false;
+        Debug.Log("Recovered");
     }
     
-    private void OnTriggerEnter2D(Collider2D other)
+    public IEnumerator KillEnemy()
     {
-        if (other.gameObject.tag.Equals("Player"))
-        {
-            if (isWeaken)
-            {
-                StartCoroutine(KillEnemy());    
-            }
-        }
-    }
-
-    IEnumerator KillEnemy()
-    {
-        Debug.Log("Killed");
-        yield return new WaitForSeconds(1f);
+        enemyAnim.SetTrigger("isDead");
+        isDead = true;
+        CurrentStatus = EnemyStatus.Dead;
+        //respawn to spawn point;
+        yield return new WaitForSeconds(5f);
     }
     
     

@@ -16,11 +16,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private static TMP_Text scoreText;
     [SerializeField] private TMP_Text ghostWeakenText;
+    [SerializeField] private Transform lifeDonutImages;
+    [SerializeField] private TMP_Text bestRecord;
     private TMP_Text gameStartText;
 
     public static bool IsPlaying { get; set; }
     private Button levelChangeBtn;
-    
+
     private static UIManager _manager;
     // Start is called before the first frame update
 
@@ -36,7 +38,13 @@ public class UIManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
+        bestRecord = GameObject.Find("ScoreText").GetComponent<TMP_Text>();
         levelChangeBtn = GameObject.Find("Level1Btn").GetComponent<Button>();
+
+
+        TimeSpan bestTime = TimeSpan.FromSeconds(PlayerPrefs.GetFloat("Time"));
+        int bestScore = PlayerPrefs.GetInt("Score");
+        bestRecord.text = $"Best Record\n {bestTime.ToString(@"mm\:ss\:fff")}\n {bestScore}";
         levelChangeBtn.onClick.AddListener(MoveToMainScene);
         
     }
@@ -49,9 +57,13 @@ public class UIManager : MonoBehaviour
             time += Time.deltaTime;
             TimeSpan timer = TimeSpan.FromSeconds(time);
             timeText.text = timer.ToString(@"mm\:ss\:fff");
+            if (PacStudentController.PalletCount == 0)
+            {
+                StartCoroutine(GameOver());
+            }
         }
     }
-    
+
     public void MoveToMainScene()
     {
         Debug.Log("clicked");
@@ -69,6 +81,7 @@ public class UIManager : MonoBehaviour
         Init();
         Debug.Log("BackBtn Clicked");
         SceneManager.LoadSceneAsync("StartScene");
+        SceneManager.sceneLoaded += OnStartSceneLoaded;
     }
 
     private void Init()
@@ -80,12 +93,13 @@ public class UIManager : MonoBehaviour
         levelChangeBtn = null;
     }
 
-    public void OnMainSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnMainSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        
         timeText = GameObject.Find("Timer").transform.Find("Time").GetComponentInChildren<TMP_Text>();
         scoreText = GameObject.Find("Score").transform.Find("ScoreValue").GetComponentInChildren<TMP_Text>();
-        ghostWeakenText = GameObject.Find("ScaredTimer").transform.Find("ScaredTime").GetComponentInChildren<TMP_Text>();
+        lifeDonutImages = GameObject.Find("Lives").transform;
+        ghostWeakenText = GameObject.Find("ScaredTimer").transform.Find("ScaredTime")
+            .GetComponentInChildren<TMP_Text>();
         ghostWeakenText.gameObject.SetActive(false);
 
         Button btn = GameObject.Find("Button").GetComponent<Button>();
@@ -93,8 +107,21 @@ public class UIManager : MonoBehaviour
 
         gameStartText = GameObject.Find("GameStartText").GetComponent<TMP_Text>();
         StartCoroutine(StartGame());
-        
+
         SceneManager.sceneLoaded -= OnMainSceneLoaded;
+    }
+
+    private void OnStartSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        
+        bestRecord = GameObject.Find("ScoreText").GetComponent<TMP_Text>();
+        levelChangeBtn = GameObject.Find("Level1Btn").GetComponent<Button>();
+        
+        TimeSpan bestTime = TimeSpan.FromSeconds(PlayerPrefs.GetFloat("Time"));
+        int bestScore = PlayerPrefs.GetInt("Score");
+        bestRecord.text = $"Best Record\n {bestTime.ToString(@"mm\:ss\:fff")}\n {bestScore}";
+        levelChangeBtn.onClick.AddListener(MoveToMainScene);
+        SceneManager.sceneLoaded -= OnStartSceneLoaded;
     }
 
     IEnumerator StartGame()
@@ -115,15 +142,10 @@ public class UIManager : MonoBehaviour
         IsPlaying = true;
         gameStartText.gameObject.SetActive(false);
     }
-
-    IEnumerator EndGame()
-    {
-        //Set GameStartText Active, set text to "GameOver", Save on PlayerPrefs; 
-        yield return null;
-    }
-
+    
     public IEnumerator OnGhostScared()
     {
+        Debug.Log($"Coroutine : {nameof(OnGhostScared)}TimeScale : {Time.timeScale}");
         ghostWeakenText.gameObject.SetActive(true);
         ghostWeakenText.alignment = TextAlignmentOptions.Center;
         int count = 10;
@@ -137,9 +159,31 @@ public class UIManager : MonoBehaviour
         ghostWeakenText.gameObject.SetActive(false);
     }
 
-    public static void SetScoreText(int score)
+    public void SetScoreText(int score)
     {
         scoreText.text = score.ToString();
     }
-    
+
+    public IEnumerator GameOver()
+    {
+        PlayerPrefs.SetInt("Score", PacStudentController.Score);
+        PlayerPrefs.SetFloat("Time", (float)time);
+        IsPlaying = false;
+        gameStartText.gameObject.SetActive(true);
+        gameStartText.text = "Game Over!";
+        PlayerPrefs.Save();
+        yield return new WaitForSecondsRealtime(3f);
+        MoveToMainScene();
+    }
+
+    public void DeleteIcon(int idx)
+    {
+        Transform icon = lifeDonutImages.Find("LifeIcons").Find($"Icon{idx}");
+        if (icon is not null)
+        {
+            Destroy(icon.gameObject);
+        }
+        
+
+    }
 }

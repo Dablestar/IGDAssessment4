@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 public class PacStudentController : MonoBehaviour
 {
@@ -192,6 +193,15 @@ public class PacStudentController : MonoBehaviour
         effectSource.clip = onWallHitSound;
         effectSource.Play();
     }
+    private void StopForTP()
+    {
+        Debug.Log("StopForTP()");
+        isWalking = false;
+        moveSpeed = 0f;
+        currentInput = Direction.None;
+        lastInput = Direction.None;
+        studentTweener.AbortTween();
+    }
 
     private void Walk()
     {
@@ -206,34 +216,52 @@ public class PacStudentController : MonoBehaviour
         studentAnim.SetTrigger("isDead");
         studentSound.clip = onPlayerHitSound;
         studentSound.Play();
+        _manager.DeleteIcon(PlayerLife);
+        PlayerLife--;
         if (ObjectSpawner.Respawn(gameObject.transform))
         {
-            yield return new WaitForSeconds(1f);
-            PlayerLife--;
+            yield return new WaitUntil(() => !studentTweener.TweenExists(transform));
         }
         else
         {
-            Application.Quit();
+            gameObject.SetActive(false);
+            _manager.GameOver();
         }
-
         posX = 1;
         posY = 1;
-        yield return new WaitForSeconds(3f);
+        
         gameObject.GetComponent<Collider2D>().enabled = true;
     }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag.Equals("Enemy"))
         {
-            if (!EnemyController.isWeaken)
+            EnemyController hitEnemy = other.gameObject.GetComponent<EnemyController>();
+            if (hitEnemy.CurrentStatus.Equals(EnemyController.EnemyStatus.Weaken) || hitEnemy.CurrentStatus.Equals(EnemyController.EnemyStatus.Recovering))
+            {
+                StartCoroutine(hitEnemy.KillEnemy());
+                AddScore(300);
+            }
+            else if(hitEnemy.CurrentStatus.Equals(EnemyController.EnemyStatus.Walking))
             {
                 StartCoroutine(KillPlayer());
             }
             else
             {
-                AddScore(300);
+                Debug.Log("Dead Enemy");
             }
+        }
+
+        if (other.gameObject.tag.Equals("Special"))
+        {
+            GameObject[] allEnemy = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (var enemy in allEnemy)
+            {
+                EnemyController temp = enemy.GetComponent<EnemyController>();
+                StartCoroutine(temp.WeakenEnemy());
+            }
+
+            StartCoroutine(_manager.OnGhostScared());
         }
 
         if (other.gameObject.tag.Equals("TP"))
@@ -259,7 +287,7 @@ public class PacStudentController : MonoBehaviour
     private void Teleport()
     {
         Direction tempInput = lastInput;
-        Stop();
+        StopForTP();
         if (posX <= -1)
         {
             posX = 27;
