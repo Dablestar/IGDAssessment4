@@ -11,8 +11,13 @@ public class Tweener : MonoBehaviour {
     private List<Vector2> movingArr;
     private List<string[]> map;
 
-    void Awake() {
+    void Awake()
+    {
         activeTweens = new List<Tween>();
+    }
+
+    void Start()
+    {
         map = LevelGenerator.MapInfo;
     }
     
@@ -71,7 +76,7 @@ public class Tweener : MonoBehaviour {
     }
     public bool IsWalkable(Direction direction, int x, int y)
     {
-        if (x == -1 || x == map.Count)
+        if ((x == -1 || x == map.Count) && gameObject.tag.Equals("Player"))
         {
             return true;
         }

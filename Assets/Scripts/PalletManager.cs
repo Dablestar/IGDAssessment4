@@ -29,14 +29,12 @@ public class PalletManager : MonoBehaviour
                 case "Normal":
                     PacStudentController.AddScore(10);
                     PacStudentController.PalletCount--;
-                    Debug.Log($"pallet Left : {PacStudentController.PalletCount}");
                     break;
                 case "Bonus":
                     PacStudentController.AddScore(100);
                     break;
                 case "Special":
                     PacStudentController.PalletCount--;
-                    Debug.Log($"pallet Left : {PacStudentController.PalletCount}");
                     break;
             }
             _manager.SetScoreText(PacStudentController.Score);
