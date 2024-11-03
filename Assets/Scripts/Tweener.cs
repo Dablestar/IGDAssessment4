@@ -64,10 +64,13 @@ public class Tweener : MonoBehaviour
             new(targetObject.transform.position.x, targetObject.transform.position.y - 1),
             new(targetObject.transform.position.x + 1, targetObject.transform.position.y)
         };
-        if (!IsWalkable(direction, x, y) || TweenExists(targetObject) || direction == Direction.None) return false;
-        AddTween(targetObject, startPos, movingArr[(int)direction], moveSpeed);
-        return true;
+        if (IsWalkable(direction, x, y) && !TweenExists(targetObject) && direction != Direction.None)
+        {
+            AddTween(targetObject, startPos, movingArr[(int)direction], moveSpeed);
+            return true;
+        }
 
+        return false;
     }
 
     public bool TweenExists(Transform target)

@@ -9685,12 +9685,12 @@ GameObject:
   - component: {fileID: 1156589138663826648}
   - component: {fileID: 186937251519631595}
   - component: {fileID: 5074942049453249513}
-  - component: {fileID: -6828568806123406128}
+  - component: {fileID: 1999093824225433728}
   - component: {fileID: 3205364158948417380}
   - component: {fileID: 8970520876446951428}
   - component: {fileID: 6906061675870053135}
   m_Layer: 0
-  m_Name: PacStudent
+  m_Name: AltPacStudent
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9886,7 +9886,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-6828568806123406128
+--- !u!114 &1999093824225433728
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9895,13 +9895,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8800493757511251132}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41d4fafcbfe3ae34cb35d45d54004c78, type: 3}
+  m_Script: {fileID: 11500000, guid: d9a4cc24f85941d283a607c61366ece0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 0
-  footstepSoundEffects:
-  - {fileID: 8300000, guid: ee8d9b10706c1354fb46f4d29987078e, type: 3}
-  - {fileID: 8300000, guid: afdc94c070bcf0643be5eaa48d890bdc, type: 3}
+  footstepSoundEffects: []
   onPlayerHitSound: {fileID: 8300000, guid: 43c6955197bac7d45b4ae3a7879c85c3, type: 3}
   onEnemyHitSound: {fileID: 8300000, guid: 14ba9097d873cc640a4ea3d1cdd6d763, type: 3}
   onWallHitSound: {fileID: 8300000, guid: e7c91c5cd14b4bb40a349f5937648361, type: 3}
@@ -9910,6 +9908,7 @@ MonoBehaviour:
   collisionParticle: {fileID: 4441454294973741406}
   posX: 0
   posY: 0
+  bullet: {fileID: 4073193429076897341, guid: 4dd804760bfab1b4db316ba2ce90a4dd, type: 3}
 --- !u!114 &3205364158948417380
 MonoBehaviour:
   m_ObjectHideFlags: 0

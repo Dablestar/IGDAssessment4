@@ -26,6 +26,12 @@ public class BGAudioPlayer : MonoBehaviour
         source = gameObject.GetComponent<AudioSource>();
     }
 
+    public void PlayKilledBackground()
+    {
+        source.clip = audioList[3];
+        source.Play();
+    }
+
     public void PlayWeakenBackground()
     {
         source.clip = audioList[2];

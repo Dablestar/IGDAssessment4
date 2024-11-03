@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
-public class PacStudentController : MonoBehaviour
+public class AltPacStudentController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
     private AudioSource effectSource;
@@ -23,6 +23,7 @@ public class PacStudentController : MonoBehaviour
     private static int playerLife = 3;
     private static int palletCount = 0;
     [SerializeField] private int posX, posY;
+    [SerializeField] private GameObject bullet;
 
     private UIManager _manager;
 
@@ -108,6 +109,14 @@ public class PacStudentController : MonoBehaviour
                 {
                     lastInput = Direction.Right;
                     moveSpeed = 0.5f;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    //Spacebar, use firearm which costs life(like risk of using firearm). if hit, get score 300
+                    Instantiate(bullet);
+                    _manager.DeleteIcon(PlayerLife);
+                    PlayerLife--;
                 }
             }
         }

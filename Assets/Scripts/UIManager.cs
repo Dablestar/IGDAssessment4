@@ -74,7 +74,9 @@ public class UIManager : MonoBehaviour
 
     public void MoveToDesignIteration()
     {
-        Debug.Log("Not Implemented");
+        Debug.Log("Design Clicked");
+        SceneManager.LoadScene("DesignScene");
+        SceneManager.sceneLoaded += OnDesignSceneLoaded;
     }
 
     public void MoveToStartScene()
@@ -125,6 +127,27 @@ public class UIManager : MonoBehaviour
         levelChangeBtn.onClick.AddListener(MoveToMainScene);
         SceneManager.sceneLoaded -= OnStartSceneLoaded;
     }
+    
+    private void OnDesignSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        timeText = GameObject.Find("Timer").transform.Find("Time").GetComponentInChildren<TMP_Text>();
+        scoreText = GameObject.Find("Score").transform.Find("ScoreValue").GetComponentInChildren<TMP_Text>();
+        lifeDonutImages = GameObject.Find("Lives").transform;
+        ghostWeakenText = GameObject.Find("ScaredTimer").transform.Find("ScaredTime")
+            .GetComponentInChildren<TMP_Text>();
+        ghostWeakenText.gameObject.SetActive(false);
+        
+        bg = GameObject.Find("BGPlayer").GetComponent<BGAudioPlayer>();
+        bg.PlayNormalBackground();
+
+        Button btn = GameObject.Find("Button").GetComponent<Button>();
+        btn.onClick.AddListener(_manager.MoveToStartScene);
+
+        gameStartText = GameObject.Find("GameStartText").GetComponent<TMP_Text>();
+        StartCoroutine(StartGame());
+
+        SceneManager.sceneLoaded -= OnDesignSceneLoaded;
+    }
 
     IEnumerator StartGame()
     {
@@ -132,7 +155,6 @@ public class UIManager : MonoBehaviour
         while (count > 0)
         {
             //3, 2, 1
-            Debug.Log($"{count}");
             gameStartText.text = $"{count}";
             count--;
             yield return new WaitForSeconds(1f);
@@ -154,7 +176,6 @@ public class UIManager : MonoBehaviour
         int count = 10;
         while (count > 0)
         {
-            Debug.Log(count);
             ghostWeakenText.text = $"Arrest Them! \n {count}";
             count--;
             yield return new WaitForSeconds(1f);

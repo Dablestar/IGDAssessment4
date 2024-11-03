@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ObjectSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject altPlayer;
     [SerializeField] private GameObject enemy;
     private List<GameObject> enemyList;
 
@@ -18,6 +20,7 @@ public class ObjectSpawner : MonoBehaviour
     void Awake()
     {
         enemyList = new List<GameObject>();
+        
         playerSpawnPoint = GameObject.Find("PlayerSpawnPoint").transform.position;
         enemySpawnPointList = new List<Vector3>()
         {
@@ -26,7 +29,13 @@ public class ObjectSpawner : MonoBehaviour
             GameObject.Find("EnemySpawnPoint").transform.GetChild(2).position,
             GameObject.Find("EnemySpawnPoint").transform.GetChild(3).position,
         };
-        Instantiate(player, playerSpawnPoint, Quaternion.identity, GameObject.Find("LevelGenerator").transform);
+        if (SceneManager.GetSceneByName("DesignScene").IsValid())
+        {
+            Instantiate(altPlayer, playerSpawnPoint, Quaternion.identity, GameObject.Find("LevelGenerator").transform);
+        }else if (SceneManager.GetSceneByName("MainScene").IsValid())
+        {
+            Instantiate(player, playerSpawnPoint, Quaternion.identity, GameObject.Find("LevelGenerator").transform);
+        }
 
         for (int i = 0; i < 4; i++)
         {
@@ -83,10 +92,9 @@ public class ObjectSpawner : MonoBehaviour
                 spawnPoint = new Vector3(0, 0, 0);
                 Debug.Log("Error");
                 break;
-
         }
+
+        controller.EnemyTweener.AddTween(enemy, enemy.transform.position, spawnPoint, 3f);
         Debug.Log($"Respawning at: {spawnPoint}");
-        PacStudentController.StudentTweener.AbortTween();
-        PacStudentController.StudentTweener.AddTween(enemy, enemy.position, spawnPoint, 3f);
     }
 }
