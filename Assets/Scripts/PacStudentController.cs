@@ -224,8 +224,8 @@ public class PacStudentController : MonoBehaviour
         }
         else
         {
+            StartCoroutine(_manager.GameOver());
             gameObject.SetActive(false);
-            _manager.GameOver();
         }
         posX = 1;
         posY = 1;

@@ -5,7 +5,8 @@ using dir;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Tweener : MonoBehaviour {
+public class Tweener : MonoBehaviour
+{
     //private Tween activeTween;
     private List<Tween> activeTweens;
     private List<Vector2> movingArr;
@@ -20,70 +21,78 @@ public class Tweener : MonoBehaviour {
     {
         map = LevelGenerator.MapInfo;
     }
-    
-    void Update() {
-            Tween activeTween;
-            for (int i = activeTweens.Count-1; i >=0; i--)
+
+    void Update()
+    {
+        Tween activeTween;
+        for (int i = activeTweens.Count - 1; i >= 0; i--)
+        {
+            activeTween = activeTweens[i];
+            if (Vector3.Distance(activeTween.Target.position, activeTween.EndPos) > 0.1f)
             {
-                activeTween = activeTweens[i];
-                if (Vector3.Distance(activeTween.Target.position, activeTween.EndPos) > 0.1f) {
-                    float timeFraction = (Time.time - activeTween.StartTime) / activeTween.Duration;
-                    activeTween.Target.position = Vector3.Lerp(activeTween.StartPos,
-                        activeTween.EndPos,
-                        timeFraction);                
-                } else {
-                    activeTween.Target.position = activeTween.EndPos;
-                    activeTweens.RemoveAt(i);
-                }
+                float timeFraction = (Time.time - activeTween.StartTime) / activeTween.Duration;
+                activeTween.Target.position = Vector3.Lerp(activeTween.StartPos,
+                    activeTween.EndPos,
+                    timeFraction);
             }
+            else
+            {
+                activeTween.Target.position = activeTween.EndPos;
+                activeTweens.RemoveAt(i);
+            }
+        }
     }
 
     public bool AddTween(Transform targetObject, Vector2 startPos, Vector2 endPos, float duration)
     {
         if (!TweenExists(targetObject))
         {
-            activeTweens.Add(new Tween(targetObject, new Vector3(startPos.x, startPos.y, -1), new Vector3(endPos.x, endPos.y, -1), Time.time, duration));
+            activeTweens.Add(new Tween(targetObject, new Vector3(startPos.x, startPos.y, -1),
+                new Vector3(endPos.x, endPos.y, -1), Time.time, duration));
             return true;
         }
+
         return false;
     }
+
     public bool Move(Transform targetObject, Vector2 startPos, Direction direction, float moveSpeed, int x, int y)
     {
         movingArr = new List<Vector2>()
         {
-            new(targetObject.transform.position.x, targetObject.transform.position.y+1),
-            new(targetObject.transform.position.x-1, targetObject.transform.position.y),
-            new(targetObject.transform.position.x, targetObject.transform.position.y-1),
-            new(targetObject.transform.position.x+1, targetObject.transform.position.y)
+            new(targetObject.transform.position.x, targetObject.transform.position.y + 1),
+            new(targetObject.transform.position.x - 1, targetObject.transform.position.y),
+            new(targetObject.transform.position.x, targetObject.transform.position.y - 1),
+            new(targetObject.transform.position.x + 1, targetObject.transform.position.y)
         };
-        if (IsWalkable(direction, x, y) && !TweenExists(targetObject) && direction != Direction.None)
-        {
-            AddTween(targetObject, startPos, movingArr[(int)direction], moveSpeed);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        if (!IsWalkable(direction, x, y) || TweenExists(targetObject) || direction == Direction.None) return false;
+        AddTween(targetObject, startPos, movingArr[(int)direction], moveSpeed);
+        return true;
+
     }
 
-    public bool TweenExists(Transform target) {
-        foreach (Tween activeTween in activeTweens) {
+    public bool TweenExists(Transform target)
+    {
+        foreach (Tween activeTween in activeTweens)
+        {
             if (activeTween.Target.transform == target)
                 return true;
         }
+
         return false;
     }
+
     public bool IsWalkable(Direction direction, int x, int y)
     {
         if ((x == -1 || x == map.Count) && gameObject.tag.Equals("Player"))
         {
             return true;
         }
+
         if (x < 0 || y < 0 || y >= map.Count - 1 || x >= map[y].Length)
         {
             return false;
         }
+
         //neighbor indexing
         string upNeighbor = y > 0 ? map[y - 1][x] : "0";
         string downNeighbor = y < map.Count - 1 ? map[y + 1][x] : "0";
@@ -94,7 +103,7 @@ public class Tweener : MonoBehaviour {
         {
             return !(neighbor.Equals("0") || neighbor.Equals("5") || neighbor.Equals("6"));
         }
-        
+
         switch (direction)
         {
             case Direction.Up:

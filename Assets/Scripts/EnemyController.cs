@@ -235,7 +235,6 @@ public class EnemyController : MonoBehaviour
         else if (temp.x < 0 && temp.y < 0) { availableDirections.Add(Direction.Down); availableDirections.Add(Direction.Left); }
         
         availableDirections.RemoveAll(d => d == lastDirection);
-        availableDirections.RemoveAll(d => !enemyTweener.IsWalkable(d, posX, posY));
 
         if (availableDirections.Count == 0)
         {
@@ -259,7 +258,6 @@ public class EnemyController : MonoBehaviour
         availableDirections.Add(Direction.Right);
         
         availableDirections.RemoveAll(d => d == lastDirection);
-        availableDirections.RemoveAll(d => !enemyTweener.IsWalkable(d, posX, posY));
         Walk(availableDirections[Random.Range(0, availableDirections.Count)]);
     }
 
@@ -270,18 +268,47 @@ public class EnemyController : MonoBehaviour
 
     private void Walk(Direction direction)
     {
-        if (!enemyTweener.TweenExists(transform))
+        if (!enemyTweener.TweenExists(transform) && lastDirection != Direction.None)
         {
-            currentDirection = direction;
-            enemyAnim.SetInteger("movingDirection", (int)direction + 1);
-            enemyTweener.Move(transform, transform.position, direction, moveSpeed, posX, posY);
-            
-            switch (direction)
+            if (enemyTweener.IsWalkable(lastDirection, posX, posY))
             {
-                case Direction.Up: posY--; break;
-                case Direction.Down: posY++; break;
-                case Direction.Left: posX--; break;
-                case Direction.Right: posX++; break;
+                enemyAnim.SetInteger("movingDirection", (int)lastDirection + 1);
+                currentDirection = lastDirection;
+                enemyTweener.Move(transform, transform.position, lastDirection, moveSpeed, posX, posY);
+                switch (lastDirection)
+                {
+                    case Direction.Up:
+                        posY--;
+                        break;
+                    case Direction.Down:
+                        posY++;
+                        break;
+                    case Direction.Left:
+                        posX--;
+                        break;
+                    case Direction.Right:
+                        posX++;
+                        break;
+                }
+            }
+            else if (enemyTweener.IsWalkable(currentDirection, posX, posY))
+            {
+                enemyTweener.Move(transform, transform.position, currentDirection, moveSpeed, posX, posY);
+                switch (currentDirection)
+                {
+                    case Direction.Up:
+                        posY--;
+                        break;
+                    case Direction.Down:
+                        posY++;
+                        break;
+                    case Direction.Left:
+                        posX--;
+                        break;
+                    case Direction.Right:
+                        posX++;
+                        break;
+                }
             }
         }
     }

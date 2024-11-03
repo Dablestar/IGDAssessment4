@@ -68,7 +68,7 @@ public class UIManager : MonoBehaviour
     public void MoveToMainScene()
     {
         Debug.Log("clicked");
-        SceneManager.LoadSceneAsync("MainScene");
+        SceneManager.LoadScene("MainScene");
         SceneManager.sceneLoaded += OnMainSceneLoaded;
     }
 
@@ -79,9 +79,8 @@ public class UIManager : MonoBehaviour
 
     public void MoveToStartScene()
     {
-        Init();
         Debug.Log("BackBtn Clicked");
-        SceneManager.LoadSceneAsync("StartScene");
+        SceneManager.LoadScene("StartScene");
         SceneManager.sceneLoaded += OnStartSceneLoaded;
     }
 
@@ -171,14 +170,21 @@ public class UIManager : MonoBehaviour
     public IEnumerator GameOver()
     {
         bg.Source.Stop();
-        PlayerPrefs.SetInt("Score", PacStudentController.Score);
-        PlayerPrefs.SetFloat("Time", (float)time);
+        if (PlayerPrefs.GetInt("Score") < PacStudentController.Score)
+        {
+            PlayerPrefs.SetInt("Score", PacStudentController.Score);    
+        }
+
+        if (PlayerPrefs.GetFloat("Time") < (float)time)
+        {
+            PlayerPrefs.SetFloat("Time", (float)time);   
+        }
         IsPlaying = false;
         gameStartText.gameObject.SetActive(true);
         gameStartText.text = "Game Over!";
+        yield return new WaitForSeconds(3f);
         PlayerPrefs.Save();
-        yield return new WaitForSecondsRealtime(3f);
-        MoveToMainScene();
+        MoveToStartScene();
     }
 
     public void DeleteIcon(int idx)
